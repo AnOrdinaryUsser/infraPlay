@@ -1,12 +1,13 @@
 <a name="readme-top"></a>
-# Web platform for waste sorting 
+# Web platform for playing games with infrared technology
 <p align="center">
   <a href="https://example.com/">
-    <img src="https://github.com/AnOrdinaryUsser/BESS_SAS/assets/61872281/d987efc2-0d89-411e-8b1a-706ac637915a" alt="Logo" width=100 height=100>
+    <img src="https://github.com/user-attachments/assets/99feabca-c0e6-40df-8c9e-daed1649aca1" alt="Logo" width=100 height=100>
+
   </a>
-  <h3 align="center">Bess (Bin Eco System Sorter)</h3>
+  <h3 align="center">InfraPlay</h3>
   <p align="center">
-    Project for the call 23/24 for sustainable campuses of the University of Salamanca @ USAL - Web platform for smart waste sorting
+    Project for the call 23/24 of the general foundation of the University of Salamanca to @USAL - Market-oriented prototypes.
     <br>
   </p>
 </p>
@@ -16,7 +17,6 @@
 * [![React][React.js]][React-url]
 * [![Javascript][Javascript]][Javascript-url]
 * [![MySQL][MySQL]][MySQL-url]
-* [![Sketchup][Sketchup]][Sketchup-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -41,12 +41,6 @@ nodemon install && nodemon start
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Some screenshots
-
-![HomeScreen](https://github.com/AnOrdinaryUsser/BESS_SAS/assets/61872281/6817bbee-6f08-4f78-9510-dc5b02d37731)
-![Dashboard](https://github.com/AnOrdinaryUsser/BESS_SAS/assets/61872281/c914a3b4-90e2-4789-8e91-e30584dee0df)
-![Devices](https://github.com/AnOrdinaryUsser/BESS_SAS/assets/61872281/a79d7788-dcca-4e99-bff0-c6ebd9dfbda0)
-![Gallery](https://github.com/AnOrdinaryUsser/BESS_SAS/assets/61872281/d2935158-4d3e-43dd-9f15-55008d6591b6)
-![Chart](https://github.com/AnOrdinaryUsser/BESS_SAS/assets/61872281/fd96f9ed-14ec-4657-95a6-a968292c7e4b)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
