@@ -7,6 +7,7 @@ import db from "./config/AuthDB.js";
 import router from "./routes/index.js";
 import Users from "./models/UserModel.js";
 import Sections from "./models/SectionsModel.js";
+import Games from "./models/GameModel.js";
 import { Sequelize } from "sequelize";
 import fs from 'fs';
 import bodyParser from "body-parser";
@@ -65,6 +66,27 @@ app.listen(9000, async () => {
         userName: 'admin',
       });
     }
+
+    const imageGame1 = fs.readFileSync('../frontend/src/assets/images/TicTacToe.png');
+    const imageGame2 = fs.readFileSync('../frontend/src/assets/images/Diana.jpg');
+
+    const games = await Games.findByPk(1);
+
+    if (!games) {
+      await Games.create({
+        name: 'Tres en raya',
+        gameUrl: '',
+        image: imageGame1,
+        sectionId: '1',
+      });
+      await Games.create({
+        name: 'Diana',
+        gameUrl: '',
+        image: imageGame2,
+        sectionId: '1',
+      });
+    }
+    
 
   } catch (err) {
     console.error(err);
