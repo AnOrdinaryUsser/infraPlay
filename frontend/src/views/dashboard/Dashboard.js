@@ -41,6 +41,7 @@ const Dashboard = () => {
   const [addGameModalVisible, setAddGameModalVisible] = useState(false);
   const [rows, setRows] = useState(0);
   const [cols, setCols] = useState(0);
+  const [validated, setValidated] = useState(false);
   const [grid, setGrid] = useState({ rows: 0, cols: 0 });
   const [sections, setSections] = useState([]);
   const [userName, setUserName] = useState("");
@@ -57,6 +58,15 @@ const Dashboard = () => {
   const [gameName, setGameName] = useState("");
   const [gameUrl, setGameUrl] = useState("");
   const [gameImage, setGameImage] = useState(null);
+
+  const [sectionName, setSectionName] = useState(0);
+  const [sectionRows, setSectionRows] = useState(0);
+  const [sectionCols, setSectionCols] = useState(0);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [editSectionName, setEditSectionName] = useState("");
+  const [editSectionRows, setEditSectionRows] = useState(0);
+  const [editSectionCols, setEditSectionCols] = useState(0);
 
   useEffect(() => {
     // Refresh token and get user info
@@ -156,6 +166,32 @@ const Dashboard = () => {
     window.open(`http://192.168.1.50:3000/embed/${gameId}`, '_blank');
   };
 
+  const handleModifySection = async (e) => {
+    e.preventDefault();
+    const updatedSection = {
+      ...selectedSection,
+      name: editSectionName,
+      rows: editSectionRows,
+      cols: editSectionCols,
+    };
+    try {
+      await modifySection(updatedSection, setValidated);
+      setEditModalVisible(false);
+      alert("Sección modificada con éxito");
+    } catch (error) {
+      console.error("Error al modificar la sección:", error);
+      alert("Error al modificar la sección");
+    }
+  };
+
+  const handleEdit = (section) => {
+    setSelectedSection(section);
+    setEditSectionName(section.name);
+    setEditSectionRows(section.rows);
+    setEditSectionCols(section.cols);
+    setEditModalVisible(true);
+  };
+
   return (
     <>
       <CContainer>
@@ -199,7 +235,7 @@ const Dashboard = () => {
                                         src={`data:image/jpeg;base64,${games[gameIndex].image}`}
                                         onClick={() => handleImageClick(games[gameIndex].gameUrl)}
                                         style={{  cursor: 'pointer', 
-                                                  maxWidth: '100%',                                            
+                                                  maxWidth: '50%',                                            
                                                   height: 'auto', }} 
                                       />
                                     )}
@@ -229,7 +265,7 @@ const Dashboard = () => {
                   color="secondary"
                   style={{ color: "white" }}
                   onClick={() => setModalVisible(true)}>
-                Edit Grid
+                Editar cuadrícula
               </CButton>
               </CTabPane>
             ))}
@@ -238,23 +274,26 @@ const Dashboard = () => {
 
         {/* Modal for grid settings */}
         <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
-          <CModalHeader>Customize Grid</CModalHeader>
+          <CModalHeader>Personaliza tu cuadrícula</CModalHeader>
           <CModalBody>
             <CFormInput
+              placeholder="Filas"
               type="number"
-              placeholder="Number of Rows"
-              value={rows}
-              onChange={(e) => setRows(parseInt(e.target.value))}
+              value={editSectionRows}
+              onChange={(e) => setEditSectionRows(e.target.value)}
+              required
             />
             <CFormInput
-              type="number"
-              placeholder="Number of Columns"
-              value={cols}
-              onChange={(e) => setCols(parseInt(e.target.value))}
+             placeholder="Columnas"
+             type="number"
+             value={editSectionRows}
+             onChange={(e) => setEditSectionCols(e.target.value)}
+             required
             />
           </CModalBody>
           <CModalFooter>
-            <CButton color="primary" onClick={updateGrid}>Save</CButton>
+            <CButton color="primary" validated={validated}
+      onSubmit={(e) => handleModifySection(e)}>Guardar</CButton>
             <CButton color="secondary" onClick={() => setModalVisible(false)}>Cancel</CButton>
           </CModalFooter>
         </CModal>
