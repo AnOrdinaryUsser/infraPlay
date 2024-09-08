@@ -1,6 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
+/**
+ * @description View for embed pages
+ * This view is used to create an embedded iframe to load your game from a URL or h5p ID.
+ */
 const EmbedPage = () => {
   const { gameId } = useParams();  // Obtener el ID del juego de la URL
 

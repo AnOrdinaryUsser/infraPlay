@@ -1,5 +1,5 @@
 /**
- * Module for reset a password
+ * Module for sent emails with node mailer
  * @module MailService
  */
 import axios from "axios";
@@ -7,7 +7,6 @@ import axios from "axios";
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 const PORT_FRONTEND = process.env.REACT_APP_PORT_FRONTEND;
-const PORT_PROXY = process.env.REACT_APP_PORT_PROXY;
 
 /**
  * Send an email with an URL to change password

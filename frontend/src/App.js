@@ -18,6 +18,7 @@ const EnterEmail = React.lazy(() => import('./views/pages/forgotPassword/EnterEm
 const SentEmail = React.lazy(() => import('./views/pages/forgotPassword/SentEmail.js'))
 const ResetPassword = React.lazy(() => import('./views/pages/forgotPassword/ResetPassword.js'))
 const EmbedPage = React.lazy(() => import('./views/pages/h5p/h5p.js'))
+const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 
 
 class App extends Component {
@@ -32,6 +33,7 @@ class App extends Component {
             <Route exact path="/SentEmail" name="SentEmail" element={<SentEmail/>} />
             <Route exact path="/ResetPassword" name="ResetPassword" element={<ResetPassword/>} />
             <Route exact path="/embed/:gameId" element={<EmbedPage />} />
+            <Route exact path="/404" name="Page 404" element={<Page404 />} />
             <Route path="*" name="Home" element={<DefaultLayout />} />
           </Routes>
         </Suspense>

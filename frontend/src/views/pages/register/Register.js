@@ -13,7 +13,7 @@ import {
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilCamera, cilInstitution, cilLockLocked, cilUser } from "@coreui/icons";
-import { Register } from "../../../services/UsersService.js";
+import { Register } from "../../../services/UserService.js";
 
 /**
  * @description View for Register

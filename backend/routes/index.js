@@ -8,8 +8,6 @@ import { refreshToken } from "../controllers/RefreshToken.js";
 import { recoverPassword, resetPassword } from "../controllers/Mail.js";
 import { getSections, getSection, addSection, modifySection, deleteSection } from "../controllers/Sections.js";
 import { AddGame, getGamesBySectionId, EditGame, DeleteGame} from "../controllers/Games.js";
-  
-//import { processVideo } from "../controllers/videoRoads.js";
 import bodyParser from "body-parser";
  
 const router = express.Router();
@@ -40,7 +38,6 @@ router.post('/addGame', AddGame);
 router.get('/games', getGamesBySectionId);
 router.put('/editGame', EditGame);
 router.delete('/deleteGame', DeleteGame);
-
 
 // Mail
 router.post('/recoverPassword', recoverPassword)

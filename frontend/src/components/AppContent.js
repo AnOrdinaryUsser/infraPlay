@@ -27,7 +27,10 @@ const AppContent = () => {
               )
             )
           })}
+          {/* Redirigir a /login si el usuario está en la ruta raíz */}
           <Route path="/" element={<Navigate to="login" replace />} />
+          {/* Agregar una ruta catch-all para redirigir a la página 404 */}
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </Suspense>
     </CContainer>
