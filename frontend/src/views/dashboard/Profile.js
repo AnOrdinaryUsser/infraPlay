@@ -10,16 +10,16 @@ import {
   CForm,
   CImage,
 } from "@coreui/react";
-import { refreshToken, modifyUser } from "../../services/UsersService.js";
+import { refreshToken, modifyUser } from "../../services/UserService.js";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
 /**
- * @description View for Dashboard
- * This view will list all users of the system. Only the administrator user will be able to access it. You can also add or delete users in the system.
+ * @description View for Profile
+ * This view will display the data of the user who is logged in to the system. In addition, you can edit the data of the logged in user.
  */
-const Dashboard = () => {
+const Profile = () => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [userName, setUserName] = useState("");
@@ -181,4 +181,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Profile;

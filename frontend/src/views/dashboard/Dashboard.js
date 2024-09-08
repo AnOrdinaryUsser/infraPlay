@@ -27,22 +27,24 @@ import {
   CImage,
 } from '@coreui/react';
 import CIcon from "@coreui/icons-react";
-import { getSections } from "../../services/SectionsService.js";
-import { refreshToken } from "../../services/UsersService.js";
-import { cilImage } from "@coreui/icons";
-import { addGame, getGamesBySectionId } from "../../services/GamesService.js";
+import { cilViewStream, cilViewColumn, cilImage } from "@coreui/icons";
+import { getSections, modifySection } from "../../services/SectionService.js";
+import { refreshToken } from "../../services/UserService.js";
+import { addGame, getGamesBySectionId } from "../../services/GameService.js";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
+/**
+ * @description View for Dashboard
+ * This view will display the data of the user who is logged in to the system. In addition, you can edit the grid of ur sections and add games.
+ */
 const Dashboard = () => {
   const [activeKey, setActiveKey] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [addGameModalVisible, setAddGameModalVisible] = useState(false);
   const [rows, setRows] = useState(0);
   const [cols, setCols] = useState(0);
-  const [validated, setValidated] = useState(false);
-  const [grid, setGrid] = useState({ rows: 0, cols: 0 });
   const [sections, setSections] = useState([]);
   const [userName, setUserName] = useState("");
   const [games, setGames] = useState([]); // Estado para almacenar los juegos
@@ -264,9 +266,16 @@ const Dashboard = () => {
                 <CButton 
                   color="secondary"
                   style={{ color: "white" }}
-                  onClick={() => setModalVisible(true)}>
-                Editar cuadrícula
-              </CButton>
+                  onClick={() => {
+                    const section = sections[activeKey];  // Fetch the current section
+                    setSelectedSection(section);
+                    setEditSectionName(section.name);
+                    setEditSectionRows(section.rows);
+                    setEditSectionCols(section.cols);
+                    setModalVisible(true);  // Open modal
+                  }}>
+                  Editar cuadrícula
+                </CButton>
               </CTabPane>
             ))}
           </CTabContent>
@@ -274,27 +283,40 @@ const Dashboard = () => {
 
         {/* Modal for grid settings */}
         <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
-          <CModalHeader>Personaliza tu cuadrícula</CModalHeader>
+          <CModalHeader>Editar Cuadrícula</CModalHeader>
           <CModalBody>
-            <CFormInput
-              placeholder="Filas"
-              type="number"
-              value={editSectionRows}
-              onChange={(e) => setEditSectionRows(e.target.value)}
-              required
-            />
-            <CFormInput
-             placeholder="Columnas"
-             type="number"
-             value={editSectionRows}
-             onChange={(e) => setEditSectionCols(e.target.value)}
-             required
-            />
+            <CForm onSubmit={handleModifySection}>
+              <CInputGroup className="mb-3">
+                <CInputGroupText><CIcon icon={cilViewStream} /></CInputGroupText>
+                <CFormInput
+                  placeholder="Número de Filas"
+                  type="number"
+                  value={editSectionRows}
+                  onChange={(e) => setEditSectionRows(e.target.value)}
+                  required
+                />
+              </CInputGroup>
+              <CInputGroup className="mb-3">
+                <CInputGroupText><CIcon icon={cilViewColumn} /></CInputGroupText>
+                <CFormInput
+                  placeholder="Número de Columnas"
+                  type="number"
+                  value={editSectionCols}
+                  onChange={(e) => setEditSectionCols(e.target.value)}
+                  required
+                />
+              </CInputGroup>
+              <div className="d-grid">
+                <CButton type="submit" color="success">
+                  Guardar Cambios
+                </CButton>
+              </div>
+            </CForm>
           </CModalBody>
           <CModalFooter>
-            <CButton color="primary" validated={validated}
-      onSubmit={(e) => handleModifySection(e)}>Guardar</CButton>
-            <CButton color="secondary" onClick={() => setModalVisible(false)}>Cancel</CButton>
+            <CButton color="secondary" onClick={() => setModalVisible(false)}>
+              Cancelar
+            </CButton>
           </CModalFooter>
         </CModal>
 

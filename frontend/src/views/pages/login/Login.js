@@ -18,8 +18,12 @@ import { cilLockLocked, cilUser } from "@coreui/icons";
 import image from "./../../../assets/images/background.jpg";
 import logo from './../../../assets/images/fgusal.gif';  // Asegúrate de que la ruta al logo es correcta
 import esalabLogo from './../../../assets/images/esalab.png';  // Ruta al logo de esalab
-import { Auth } from "../../../services/UsersService.js";
+import { Auth } from "../../../services/UserService.js";
 
+/**
+ * @description View for Login
+ * In this view is where the user can log in with their credentials and access the platform if they are valid.
+ */
 const Login = () => {
   const [validated, setValidated] = useState(false);
 

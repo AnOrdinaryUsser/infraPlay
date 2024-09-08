@@ -27,17 +27,16 @@ import {
   refreshToken,
   getUsers,
   deleteUser,
-  addUser,
   Register,
   toggleUserVerification
-} from "../../services/UsersService.js";
+} from "../../services/UserService.js";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
 /**
- * @description View for AdminDashboard
- * This view will display the data of the user who is logged in to the system. In addition, you can edit the data of the logged in user.
+ * @description View for UsersDashboard
+ * This view will list all users of the system. Only the administrator user will be able to access it. You can also add or delete users in the system.
  */
 const AdminDashboard = () => {
   const [token, setToken] = useState("");

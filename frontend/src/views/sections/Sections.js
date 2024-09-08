@@ -18,26 +18,20 @@ import {
   CForm,
   CInputGroup,
   CInputGroupText,
-  CBadge,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilLockLocked, cilTrash, cilUser, cilPencil, cilViewStream, cilViewColumn } from "@coreui/icons";
-import {
-  refreshToken,
-  getUsers,
-  deleteUser,
-  addUser,
-} from "../../services/UsersService.js";
-import { getSections, addSection, deleteSection, modifySection } from "../../services/SectionsService.js";
+import { cilTrash, cilPencil, cilViewStream, cilViewColumn } from "@coreui/icons";
+import { refreshToken, addUser } from "../../services/UserService.js";
+import { getSections, addSection, deleteSection, modifySection } from "../../services/SectionService.js";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
 /**
- * @description View for AdminDashboard
- * This view will display the data of the user who is logged in to the system. In addition, you can edit the data of the logged in user.
+ * @description View for Sections
+ * This view shows you a list of sections that are associated to a user. In addition, you can add, delete and modify sections.
  */
-const AdminDashboard = () => {
+const Sections = () => {
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
   const [users, setUsers] = useState([]);
@@ -323,4 +317,4 @@ const handleModifySection = async (e) => {
   );
 };
 
-export default AdminDashboard;
+export default Sections;

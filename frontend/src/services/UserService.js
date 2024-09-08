@@ -1,3 +1,7 @@
+/**
+ * Module for CRUD functions for users
+ * @module UserService
+ */
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
@@ -39,7 +43,6 @@ export const refreshToken = async (
     setExpire(decoded.exp);
 
     console.log(response.data);
-    // Set the profile picture if available
     if (response.data.user && response.data.user.profilePicture) {
       setProfilePicture(`data:image/jpeg;base64,${response.data.user.profilePicture}`);
       console.log(response.data.user.profilePicture);
@@ -69,24 +72,6 @@ export const getUsers = async (setUsers, token, axiosJWT) => {
 };
 
 /**
- * Delete a user
- * @method deleteUser
- * @param {Object} e Event
- */
-export const deleteUser = async (e) => {
-  try {
-    await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/deleteUser`, {
-      userName: e.currentTarget.id,
-    });
-    //window.location.reload();
-  } catch (error) {
-    if (error.response) {
-      alert(error.response.data.msg);
-    }
-  }
-};
-
-/**
  * Add a new user
  * @method addUser
  * @param {Object} e Event
@@ -109,6 +94,24 @@ export const addUser = async (e, setValidated) => {
       confPassword: repeatPass.value,
     });
     window.location.reload();
+  } catch (error) {
+    if (error.response) {
+      alert(error.response.data.msg);
+    }
+  }
+};
+
+/**
+ * Delete a user
+ * @method deleteUser
+ * @param {Object} e Event
+ */
+export const deleteUser = async (e) => {
+  try {
+    await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/deleteUser`, {
+      userName: e.currentTarget.id,
+    });
+    //window.location.reload();
   } catch (error) {
     if (error.response) {
       alert(error.response.data.msg);
@@ -173,7 +176,6 @@ export const Auth = async (e, setValidated, setProfilePicture) => {
       password: password.value,
     });
     console.log(response.data);
-    // If the login is successful, store the profile picture if available
     if (response.data.user && response.data.user.profilePicture) {
       setProfilePicture(`data:image/jpeg;base64,${response.data.user.profilePicture}`);
     }
@@ -196,29 +198,23 @@ export const Auth = async (e, setValidated, setProfilePicture) => {
 export const Register = async (e, setValidated, profilePicture) => {
   const form = e.currentTarget;
   
-  // Previene el envío del formulario si no es válido
   if (form.checkValidity() === false) {
     e.preventDefault();
     e.stopPropagation();
     setValidated(true);
-    return; // Detiene la ejecución si el formulario no es válido
+    return; 
   }
 
-  // Previene el comportamiento por defecto del formulario
   e.preventDefault();
   
   try {
-    // Verifica que profilePicture sea una cadena
     let base64Data = null;
     if (typeof profilePicture === 'string') {
-      // Extrae los datos base64, sin el prefijo de tipo MIME
       base64Data = profilePicture.split(',')[1];
     } else {
       console.error('profilePicture no es una cadena');
-      // Opcional: Puedes establecer un valor predeterminado o manejar el error aquí
     }
 
-    // Realiza la solicitud POST al backend
     const response = await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/users`, {
       name: form.name.value,
       surname: form.surname.value,
@@ -231,13 +227,13 @@ export const Register = async (e, setValidated, profilePicture) => {
     });
 
     console.log("Registro exitoso:", response.data);
-    //window.location.replace("/"); // Redirige después del registro exitoso
+    window.location.replace("/"); 
   } catch (error) {
     console.error("Error al registrar el usuario:", error);
     if (error.response) {
-      alert(error.response.data.msg); // Muestra mensaje de error del backend
+      alert(error.response.data.msg); 
     } else {
-      alert("Ocurrió un error inesperado."); // Mensaje para errores no relacionados con la red
+      alert("Ocurrió un error inesperado."); 
     }
   }
 };

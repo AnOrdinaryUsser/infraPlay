@@ -1,10 +1,19 @@
+/**
+ * Module for CRUD functions for games
+ * @module GameService
+ */
 import axios from "axios";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
 /**
- * Función para añadir un nuevo juego
+ * Function to add a game in system
+ * @method addGame
+ * @param {String} gameName String to give a name for a game
+ * @param {String} gameUrl String for URL of the embed game HP5
+ * @param {String} gameImg Base64 encoded image data
+ * @param {Number} sectionId Integer for identify a section
  */
 export const addGame = async (gameName, gameUrl, gameImage, sectionId) => {
     try {
@@ -30,22 +39,29 @@ export const addGame = async (gameName, gameUrl, gameImage, sectionId) => {
 };
 
 /**
- * Función para obtener juegos por ID de sección
+ * Function to delete a game by gameId
+ * @method getGamesBySectionId
+ * @param {Number} gameId Integer for identify a game
  */
-export const getGamesBySectionId = async (sectionId) => {
+export const deleteGame = async (gameId) => {
     try {
-        const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/games`, {
-            params: { sectionId }
+        const response = await axios.delete(`http://${IP_SERVER}:${PORT_BACKEND}/deleteGame`, {
+            params: { gameId }
         });
         return response.data;
     } catch (error) {
-        console.error("Error al obtener los juegos:", error);
+        console.error("Error deleting game:", error);
         throw error;
     }
 };
 
 /**
- * Función para editar un juego existente
+ * Function to edit a game in system
+ * @method addGame
+ * @param {String} gameName String to give a name for a game
+ * @param {String} gameUrl String for URL of the embed game HP5
+ * @param {String} gameImg Base64 encoded image data
+ * @param {Number} sectionId Integer for identify a section
  */
 export const editGame = async (gameId, gameName, gameUrl, gameImage) => {
     try {
@@ -70,17 +86,23 @@ export const editGame = async (gameId, gameName, gameUrl, gameImage) => {
     }
 };
 
+
 /**
- * Función para eliminar un juego
+ * Function to get all games of section by id
+ * @method getGamesBySectionId
+ * @param {Number} sectionId Integer for identify a section
  */
-export const deleteGame = async (gameId) => {
+export const getGamesBySectionId = async (sectionId) => {
     try {
-        const response = await axios.delete(`http://${IP_SERVER}:${PORT_BACKEND}/deleteGame`, {
-            params: { gameId }
+        const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/games`, {
+            params: { sectionId }
         });
         return response.data;
     } catch (error) {
-        console.error("Error deleting game:", error);
+        console.error("Error al obtener los juegos:", error);
         throw error;
     }
 };
+
+
+

@@ -18,28 +18,22 @@ import {
   CForm,
   CInputGroup,
   CInputGroupText,
-  CBadge,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilLockLocked, cilTrash, cilImage, cilPencil } from "@coreui/icons";
-import {
-  refreshToken,
-  getUsers,
-  deleteUser,
-  addUser,
-} from "../../services/UsersService.js";
-import { getSections } from "../../services/SectionsService.js";
-import { addGame, getGamesBySectionId, editGame, deleteGame } from "../../services/GamesService.js";
+import { cilTrash, cilImage, cilPencil } from "@coreui/icons";
+import { refreshToken } from "../../services/UserService.js";
+import { getSections } from "../../services/SectionService.js";
+import { addGame, getGamesBySectionId, editGame, deleteGame } from "../../services/GameService.js";
 
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
 /**
- * @description View for AdminDashboard
- * This view will display the data of the user who is logged in to the system. In addition, you can edit the data of the logged in user.
+ * @description View for Games
+ * This view shows you a list of games that are associated to a user. In addition, you can add, delete and modify games.
  */
-const AdminDashboard = () => {
+const Games = () => {
   const [activeKey, setActiveKey] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [addGameModalVisible, setAddGameModalVisible] = useState(false);
@@ -334,4 +328,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default Games;
