@@ -6,16 +6,9 @@
 
   </a>
   <h3 align="center">InfraPlay</h3>
-  <p align="center">
-    Project for the call 23/24 of the general foundation of the University of Salamanca to @USAL - Market-oriented prototypes.
-    <br>
-    <p align="center">
-      <img src="https://github.com/user-attachments/assets/ffd8df99-00f3-4581-97c9-b2688e77d712" width="400"/>
-    </p>
     <p align="center">
       <img src="https://github.com/user-attachments/assets/1eda46f4-1bac-476e-b6a0-ed0115f97528" width="400"/>
     </p>
-  </p>
 </p>
 
 ## Built with
