@@ -18,7 +18,7 @@
   </p>
 </p>
 
-## Built with
+## 🚀 Built with
 
 * [![React][React.js]][React-url]
 * [![Javascript][Javascript]][Javascript-url]
@@ -26,7 +26,7 @@
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## How to use
+## 🛠️ How to use
 
 ### Frontend
 
@@ -46,32 +46,37 @@ nodemon install && nodemon start
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Some screenshots
+## 📸 Some screenshots
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Login
+### 🔑 Login
 
 The login interface features a minimalist and clean design, with a background containing academic-related illustrations. The background elements include school tools such as rulers, calculators, pencils, compasses, pencil sharpeners, erasers, paper clips, sheets of paper and tacks, which reinforce the educational context of the platform.
 ![login](https://github.com/user-attachments/assets/08894b93-aaa5-42c7-ae20-64f807f18801)
 
-### Profile
+### 🧑‍💻 Profile
 
 The user profile interface is designed to display and allow editing of the user's personal information. It features a simple, well-organized design with a soft color scheme and an easy-to-follow structure.
 ![profile](https://github.com/user-attachments/assets/4f641804-4d39-4d9d-a005-32dca1a2d66d)
 
-### Games
+### 🎲 Games
 
-In the “Games” section, a table showing all available games is presented. Each row in the table represents a game and may include details such as:
+📑 In the “Games” section, a table showing all available games is presented. Each row in the table represents a game and may include details such as:
 
 - Name of the game
 - Url of the game
 - Thumbnail image of the game
 
+In addition, a table displaying available games with options to:
+📝 Edit games
+➕ Add new games
+🗑️ Delete existing ones
+
 There may also be options to edit or delete games, as well as buttons to add new games to the list.
 ![games](https://github.com/user-attachments/assets/4ef9e55f-8677-44e0-99d3-a28664e639a1)
 
-### Sections
+### 🗂️ Sections
 
 The “Sections” section displays a table similar to the “Games” section, but with information about the available sections or categories. The table may include:
 
@@ -80,7 +85,7 @@ Number of rows of the grid
 Number of cols of the grid
 ![Sections](https://github.com/user-attachments/assets/5a11a695-ea90-4e62-9a55-8f4930997c48)
 
-### User dashboard
+### 📊 User dashboard
 In the “User Dashboard”, users see a more personalized and visually appealing view. Here are displayed:
 
 - Images and names of available games
@@ -92,7 +97,7 @@ In the “User Dashboard”, users see a more personalized and visually appealin
 The design is oriented to the user experience, facilitating navigation and game selection.
 ![dashboard](https://github.com/user-attachments/assets/55d07931-b631-431c-80a0-de5c24173cbb)
 
-### Admin dashboard
+### 🔧 Admin dashboard
 
 In the “Admin Dashboard”, the interface is oriented to the management of users and administrative settings. It generally includes:
 
@@ -110,9 +115,12 @@ Options for managing users, such as: Adding new users & delete existing users.
 The design focuses on efficient administration and access to key management tools.
 ![adminDashboard](https://github.com/user-attachments/assets/3aaf7d72-afd8-434d-a547-4cd1296fe312)
 
+## 🎥 Demonstration Video
+👀 See InfraPlay in action! Click below to watch a demo showcasing and how to interact with the projected tactile surface
+
+🚀 Watch the video 
 
 ## License
-
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
