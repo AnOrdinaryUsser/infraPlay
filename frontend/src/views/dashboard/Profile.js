@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import CIcon from '@coreui/icons-react'
 import {
   CButton,
   CCol,
@@ -9,16 +10,18 @@ import {
   CContainer,
   CForm,
   CImage,
+  CModal,
+  CModalHeader,
+  CModalBody,
+  CModalFooter,
 } from "@coreui/react";
 import { refreshToken, modifyUser } from "../../services/UserService.js";
+import { cilPencil } from "@coreui/icons";
+import cameraIcon from "../../assets/images/camera.png";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
-/**
- * @description View for Profile
- * This view will display the data of the user who is logged in to the system. In addition, you can edit the data of the logged in user.
- */
 const Profile = () => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
@@ -31,13 +34,47 @@ const Profile = () => {
   const [validated, setValidated] = useState(false);
   const [show, setShow] = useState(true);
   const [edit, setEdit] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(""); // Nuevo estado para la imagen de perfil
+  const [profilePicture, setProfilePicture] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newProfilePicture, setNewProfilePicture] = useState(null);
 
   const buttonHandler = () => {
     setVisibility(!visibility);
     setShow(!show);
     setEdit(!edit);
-    console.log(show);
+  };
+
+  const handleProfilePictureClick = () => {
+    setModalVisible(true);
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setNewProfilePicture(file);
+  };
+
+  const handleSaveProfilePicture = async () => {
+    if (newProfilePicture) {
+      const formData = new FormData();
+      formData.append("profilePicture", newProfilePicture);
+
+      try {
+        const response = await axios.post(
+          `http://${IP_SERVER}:${PORT_BACKEND}/updateProfilePicture`, // Asegúrate de que esta ruta sea correcta
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setProfilePicture(response.data.profilePictureUrl); // Actualizamos la imagen de perfil
+        setModalVisible(false); // Cerramos el modal después de guardar
+      } catch (error) {
+        console.error("Error al actualizar la imagen de perfil:", error);
+      }
+    }
   };
 
   useEffect(() => {
@@ -79,12 +116,58 @@ const Profile = () => {
       <CContainer>
         <CRow>
           <CCol md={15} lg={15} xl={4} className="d-flex justify-content-center">
-            <CImage
-              src={profilePicture}
-              width={300}
-              height={300}
-              style={{ borderRadius: '50%' }}
-            />
+            {/* Contenedor para la imagen y el ícono */}
+            <div
+              style={{
+                position: "relative",
+                display: "inline-block",
+                width: "300px",
+                height: "300px",
+              }}
+              onClick={handleProfilePictureClick} // Abrir el modal al hacer clic en la imagen
+            >
+              {/* Imagen con efecto de desvanecimiento */}
+              <CImage
+                src={profilePicture || "default-profile-picture.jpg"} // Asegúrate de que haya una imagen por defecto
+                width="300px"
+                height="300px"
+                style={{
+                  borderRadius: "50%",
+                  transition: "opacity 0.3s ease",
+                  opacity: 1,
+                  cursor: "pointer",
+                }}
+                onMouseOver={(e) => (e.target.style.opacity = 0.6)}
+                onMouseOut={(e) => (e.target.style.opacity = 1)}
+              />
+              {/* Ícono de lápiz superpuesto */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  opacity: 0,
+                  transition: "opacity 0.3s ease",
+                  width: "100px", // Tamaño del lápiz (ajustable)
+                  height: "100px", // Tamaño del lápiz (ajustable)
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.opacity = 1)
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.opacity = 0)
+                }
+              >
+                <img
+                  src={cameraIcon} // Cambia esto por la URL o ruta de la imagen del lápiz
+                  style={{
+                    width: "100%", // Ajusta la imagen al tamaño del contenedor
+                    height: "100%",
+                  }}
+                />
+              </div>
+            </div>
           </CCol>
           <CCol md={20} lg={20} xl={6}>
             <CForm
@@ -174,9 +257,24 @@ const Profile = () => {
               </CCol>
             </CForm>
           </CCol>
-          <p className="mb-4"></p>
         </CRow>
       </CContainer>
+
+      {/* Modal para actualizar la imagen de perfil */}
+      <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+        <CModalHeader>Actualizar Imagen de Perfil</CModalHeader>
+        <CModalBody>
+          <CFormInput type="file" onChange={handleFileChange} />
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setModalVisible(false)}>
+            Cancelar
+          </CButton>
+          <CButton color="success" onClick={handleSaveProfilePicture}>
+            Guardar
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </>
   );
 };

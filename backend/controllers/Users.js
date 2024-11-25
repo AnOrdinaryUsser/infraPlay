@@ -81,10 +81,15 @@ export const Register = async (req, res) => {
         // Enviar correo de verificación
         const verificationLink = `http://${req.headers.host}/verify/${verificationToken}`;
         const transporter = nodemailer.createTransport({
-            service: 'hotmail', // O el servicio que prefieras
+            host: 'smtp.gmail.com', // Servidor SMTP de Gmail
+            port: 587, // Puerto para STARTTLS
+            secure: false, // Cambia a true si prefieres SSL en lugar de STARTTLS
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
+                user: process.env.EMAIL_USER, // Tu correo de Gmail
+                pass: process.env.EMAIL_PASS, // Contraseña específica para aplicaciones
+            },
+            tls: {
+                rejectUnauthorized: false, // Evita errores por certificados no confiables
             },
         });
 
@@ -97,10 +102,18 @@ export const Register = async (req, res) => {
 
         await transporter.sendMail(mailOptions);
 
-        res.json({ msg: "Registration successful, please check your email to verify your account" });
+        transporter.verify((error, success) => {
+            if (error) {
+                console.error("Error in email transporter configuration: ", error);
+            } else {
+                console.log("Email transporter is ready to send emails.");
+            }
+        });
+
+        //res.json({ msg: "Registration successful, please check your email to verify your account" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error registering user" });
+        //res.status(500).json({ msg: "Error registering user" });
     }
 };
 
@@ -235,8 +248,9 @@ export const modifyUser = async(req, res) => {
  */
 export const deleteUser = async(req, res) => {
     const { userName } = req.body;
+    console.log(req.body);
     try {
-        const users = await Users.destroy({
+        const user = await Users.destroy({
             where:{
                 userName: userName
             }
@@ -272,5 +286,37 @@ export const toggleUserVerification = async (req, res) => {
       res.status(500).json({ msg: 'Error al actualizar la verificación' });
     }
 };
+
+/**
+ * Update a user's profile picture
+ * @method updateProfilePicture
+ * @route PUT /users/profile-picture
+ */
+export const updateProfilePicture = async (req, res) => {
+    const { userId, profilePicture } = req.body;
+  
+    if (!profilePicture) {
+      return res.status(400).json({ msg: "Profile picture is required" });
+    }
+  
+    try {
+      const base64Data = profilePicture.split(',')[1];
+      const buffer = Buffer.from(base64Data, 'base64');
+  
+      const user = await Users.findOne({ where: { id: userId } });
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+  
+      user.profilePicture = buffer;
+      await user.save();
+  
+      return res.json({ msg: "Profile picture updated successfully" });
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      return res.status(500).json({ msg: "Error updating profile picture" });
+    }
+  };
+  
   
   
