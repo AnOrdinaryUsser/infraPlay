@@ -29,15 +29,20 @@ export const recoverPassword = async (req, res) => {
         console.log("User don't exit");
     } else {
         const transporter = nodemailer.createTransport({
-            service: "hotmail",
+            host: 'smtp.gmail.com', // Servidor SMTP de Gmail
+            port: 587, // Puerto para STARTTLS
+            secure: false, // Cambia a true si prefieres SSL en lugar de STARTTLS
             auth: {
-                user: "aereal-vision-not-reply@hotmail.com",
-                pass: "ostias25",
+                user: process.env.EMAIL_USER, // Tu correo de Gmail
+                pass: process.env.EMAIL_PASS, // Contraseña específica para aplicaciones
             },
-        })
+            tls: {
+                rejectUnauthorized: false, // Evita errores por certificados no confiables
+            },
+        });
         try {
             var mailOptions = {
-                from: '"Aereal Vision" <aereal-vision-not-reply@hotmail.com>',
+                from: '"InfraPlay" <infraplay.not.reply@gmail.com>',
                 to: email,
                 subject: 'Solicitud de contraseña olvidada',
                 text: 'Solicitud de contraseña',

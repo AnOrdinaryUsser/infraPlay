@@ -67,21 +67,21 @@ app.listen(9000, async () => {
       });
     }
 
-    const imageGame1 = fs.readFileSync('../frontend/src/assets/images/TicTacToe.png');
-    const imageGame2 = fs.readFileSync('../frontend/src/assets/images/Diana.jpg');
+    const imageGame1 = fs.readFileSync('../frontend/src/assets/images/worldmap.jpg');
+    const imageGame2 = fs.readFileSync('../frontend/src/assets/images/memory.jpg');
 
     const games = await Games.findByPk(1);
 
     if (!games) {
       await Games.create({
-        name: 'Tres en raya',
-        gameUrl: '',
+        name: 'Paseo por los continentes',
+        gameUrl: 'https://infraplay.h5p.com/content/1292410763809324657',
         image: imageGame1,
         sectionId: '1',
       });
       await Games.create({
-        name: 'Diana',
-        gameUrl: '',
+        name: 'memory',
+        gameUrl: 'https://infraplay.h5p.com/content/1292410666411409347',
         image: imageGame2,
         sectionId: '1',
       });

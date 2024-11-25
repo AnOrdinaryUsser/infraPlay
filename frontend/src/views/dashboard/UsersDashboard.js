@@ -22,7 +22,7 @@ import {
   CRow,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilLockLocked, cilTrash, cilUser, cilInstitution, cilCamera } from "@coreui/icons";
+import { cilLockLocked, cilTrash, cilUser, cilInstitution, cilCamera, cilCheckCircle, cilXCircle } from "@coreui/icons";
 import {
   refreshToken,
   getUsers,
@@ -34,10 +34,6 @@ import {
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 
-/**
- * @description View for UsersDashboard
- * This view will list all users of the system. Only the administrator user will be able to access it. You can also add or delete users in the system.
- */
 const AdminDashboard = () => {
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
@@ -45,6 +41,8 @@ const AdminDashboard = () => {
   const [validated, setValidated] = useState(false);
   const [visible, setVisible] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [successModal, setSuccessModal] = useState(false); // Estado para la ventana modal de éxito
+  const [deleteSuccessModal, setDeleteSuccessModal] = useState(false); // Estado para el modal de éxito al eliminar
 
   useEffect(() => {
     refreshToken(setToken, setExpire);
@@ -80,22 +78,54 @@ const AdminDashboard = () => {
         img.onload = function () {
           if (img.width === img.height) {
             const base64 = reader.result;
-            setProfilePicture(base64); // Guarda la imagen en base64 en el estado
+            setProfilePicture(base64);
           } else {
             alert("La imagen debe ser cuadrada (igual ancho y alto).");
-            e.target.value = ""; // Resetea el input file
-            setProfilePicture(null); // Limpia el estado
+            e.target.value = "";
+            setProfilePicture(null);
           }
         };
       };
-      reader.readAsDataURL(file); // Lee el archivo como una URL de datos base64
+      reader.readAsDataURL(file);
     }
   };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      Register(e, setValidated, profilePicture);
+      setTimeout(() => {
+        setVisible(false); // Cierra la ventana de registro después de 1 segundo
+        setSuccessModal(true); // Muestra la ventana modal de éxito
+      }, 1000);
+      getUsers(setUsers, token, axiosJWT); // Actualiza la lista de usuarios
+      setTimeout(() => {
+        setSuccessModal(false); // Muestra la ventana modal de éxito
+        getUsers(setUsers, token, axiosJWT); // Actualiza la lista de usuarios
+      }, 3000);
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+    }
+  };
+
+  const handleDeleteUser = async (userName) => {
+    try {
+      deleteUser(userName, token);
+      setTimeout(() => {
+        setDeleteSuccessModal(false); // Cierra el modal de éxito después de 1 segundo
+        getUsers(setUsers, token, axiosJWT); // Refresca la lista de usuarios
+      }, 3000);
+      setDeleteSuccessModal(true); // Muestra el modal de éxito
+      getUsers(setUsers, token, axiosJWT); // Refresca la lista de usuarios
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+    }
+  };
+
 
   const handleToggleVerification = async (userName) => {
     try {
       await toggleUserVerification(userName, token);
-      // Refresh the users list after toggling
       getUsers(setUsers, token, axiosJWT);
     } catch (error) {
       console.error("Error al cambiar el estado de verificación:", error);
@@ -107,7 +137,7 @@ const AdminDashboard = () => {
       <h1 className="mb-4">Usuarios </h1>
       <CContainer fluid>
         <CRow>
-          <CTable className="mb-4" >
+          <CTable className="mb-4">
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell scope="col">#</CTableHeaderCell>
@@ -135,13 +165,15 @@ const AdminDashboard = () => {
                     <CTableDataCell>{user.userName}</CTableDataCell>
                     <CTableDataCell>{user.email}</CTableDataCell>
                     <CTableDataCell>{user.role}</CTableDataCell>
-                    <CTableDataCell> <CBadge
+                    <CTableDataCell>
+                      <CBadge
                         color={badgeColor}
-                        onClick={() => handleToggleVerification(user.userName, token)}
-                        style={{ cursor: 'pointer' }}
+                        onClick={() => handleToggleVerification(user.userName)}
+                        style={{ cursor: "pointer" }}
                       >
                         {badgeText}
-                      </CBadge></CTableDataCell>
+                      </CBadge>
+                    </CTableDataCell>
                     <CTableDataCell>
                       <CButton
                         style={{
@@ -150,7 +182,7 @@ const AdminDashboard = () => {
                         }}
                         size="sm"
                         id={user.userName}
-                        onClick={deleteUser}
+                        onClick={() => handleDeleteUser(user.userName)}
                       >
                         <CIcon size="xs" icon={cilTrash} />
                       </CButton>
@@ -170,116 +202,98 @@ const AdminDashboard = () => {
           Añadir usuario
         </CButton>
       </CContainer>
-      <CModal
-        alignment="center"
-        visible={visible}
-        onClose={() => setVisible(false)}
-      >
+
+      {/* Modal de Registro */}
+      <CModal alignment="center" visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader onClose={() => setVisible(false)}>
           <CModalTitle>Añadir usuario</CModalTitle>
         </CModalHeader>
         <CModalBody>
-        <CForm
-                  validated={validated}
-                  onSubmit={(e) => Register(e, setValidated, profilePicture)}
-                >
-                  <h1>Registrate</h1>
-                  <p className="text-medium-emphasis">Crea tu cuenta</p>
-                  {/* Nombre y Apellidos */}
-                  <CInputGroup className="mb-3">
-                    <CFormInput
-                      placeholder="Nombre"
-                      id="name"
-                      autoComplete="name"
-                      required
-                    />
-                    <CFormInput
-                      placeholder="Apellidos"
-                      id="surname"
-                      autoComplete="surname"
-                      required
-                    />
-                  </CInputGroup>
-                  {/* Institución */}
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilInstitution} />
-                    </CInputGroupText>
-                       <CFormInput
-                      placeholder="Institución a la que perteneces"
-                      id="institute"
-                      autoComplete="institute"
-                      required
-                    />
-                  </CInputGroup>
-                  {/* Usuario */}
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilUser} />
-                    </CInputGroupText>
-                    <CFormInput
-                      placeholder="Usuario"
-                      id="userName"
-                      autoComplete="userName"
-                      required
-                    />
-                  </CInputGroup>
-                  {/* Email */}
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>@</CInputGroupText>
-                    <CFormInput
-                      type="email"
-                      id="email"
-                      placeholder="Email"
-                      autoComplete="email"
-                      required
-                    />
-                  </CInputGroup>
-                  {/* Imagen de Perfil */}
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilCamera} />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="file"
-                      id="profilePicture"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      required
-                    />
-                  </CInputGroup>
-                  {/* Contraseña */}
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilLockLocked} />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Contraseña"
-                      autoComplete="new-password"
-                      id="pass"
-                      required
-                    />
-                  </CInputGroup>
-                  {/* Repite Contraseña */}
-                  <CInputGroup className="mb-4">
-                    <CInputGroupText>
-                      <CIcon icon={cilLockLocked} />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Repite tu contraseña"
-                      autoComplete="new-password"
-                      id="repeatPass"
-                      required
-                    />
-                  </CInputGroup>
-                  <div className="d-grid">
-                    <CButton type="submit" color="success" aria-pressed="true">
-                      Crear Cuenta
-                    </CButton>
-                  </div>
-                </CForm>
+          <CForm validated={validated} onSubmit={handleRegister}>
+            <h1>Regístrate</h1>
+            <p className="text-medium-emphasis">Crea tu cuenta</p>
+            <CInputGroup className="mb-3">
+              <CFormInput placeholder="Nombre" id="name" autoComplete="name" required />
+              <CFormInput placeholder="Apellidos" id="surname" autoComplete="surname" required />
+            </CInputGroup>
+            <CInputGroup className="mb-3">
+              <CInputGroupText>
+                <CIcon icon={cilInstitution} />
+              </CInputGroupText>
+              <CFormInput
+                placeholder="Institución a la que perteneces"
+                id="institute"
+                autoComplete="institute"
+                required
+              />
+            </CInputGroup>
+            <CInputGroup className="mb-3">
+              <CInputGroupText>
+                <CIcon icon={cilUser} />
+              </CInputGroupText>
+              <CFormInput placeholder="Usuario" id="userName" autoComplete="userName" required />
+            </CInputGroup>
+            <CInputGroup className="mb-3">
+              <CInputGroupText>@</CInputGroupText>
+              <CFormInput type="email" id="email" placeholder="Email" autoComplete="email" required />
+            </CInputGroup>
+            <CInputGroup className="mb-3">
+              <CInputGroupText>
+                <CIcon icon={cilCamera} />
+              </CInputGroupText>
+              <CFormInput
+                type="file"
+                id="profilePicture"
+                accept="image/*"
+                onChange={handleFileChange}
+                required
+              />
+            </CInputGroup>
+            <CInputGroup className="mb-3">
+              <CInputGroupText>
+                <CIcon icon={cilLockLocked} />
+              </CInputGroupText>
+              <CFormInput
+                type="password"
+                placeholder="Contraseña"
+                autoComplete="new-password"
+                id="pass"
+                required
+              />
+            </CInputGroup>
+            <CInputGroup className="mb-4">
+              <CInputGroupText>
+                <CIcon icon={cilLockLocked} />
+              </CInputGroupText>
+              <CFormInput
+                type="password"
+                placeholder="Repite tu contraseña"
+                autoComplete="new-password"
+                id="repeatPass"
+                required
+              />
+            </CInputGroup>
+            <div className="d-grid">
+              <CButton type="submit" color="success" aria-pressed="true">
+                Crear Cuenta
+              </CButton>
+            </div>
+          </CForm>
+        </CModalBody>
+      </CModal>
+
+      {/* Modal de éxito */}
+      <CModal alignment="center" visible={successModal} onClose={() => setSuccessModal(false)}>
+        <CModalBody className="text-center">
+          <CIcon icon={cilCheckCircle} size="4xl" style={{ color: "green" }} />
+          <h4 className="mt-3">Usuario registrado</h4>
+        </CModalBody>
+      </CModal>
+       {/* Modal de éxito al eliminar */}
+       <CModal alignment="center" visible={deleteSuccessModal} onClose={() => setDeleteSuccessModal(false)}>
+        <CModalBody className="text-center">
+          <CIcon icon={cilXCircle} size="4xl" style={{ color: "red" }} />
+          <h4 className="mt-3">Usuario eliminado</h4>
         </CModalBody>
       </CModal>
     </>

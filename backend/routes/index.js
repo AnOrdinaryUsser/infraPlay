@@ -2,7 +2,7 @@
  * @file Routes or endpoints
  */
 import express from "express";
-import { getUsers, Register, Login, Logout, modifyUser, deleteUser, toggleUserVerification, verifyUser } from "../controllers/Users.js";
+import { getUsers, Register, Login, Logout, modifyUser, deleteUser, toggleUserVerification, verifyUser, updateProfilePicture } from "../controllers/Users.js";
 import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
 import { recoverPassword, resetPassword } from "../controllers/Mail.js";
@@ -25,6 +25,7 @@ router.post('/login', Login);
 router.get('/token', refreshToken);
 router.delete('/logout', Logout);
 router.get('/verify/:token', verifyUser);
+router.post("/profile-picture", updateProfilePicture);
 
 // Sections
 router.get('/sections/:userName', getSections);

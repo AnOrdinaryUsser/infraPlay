@@ -6,33 +6,34 @@ import { useParams } from 'react-router-dom';
  * This view is used to create an embedded iframe to load your game from a URL or h5p ID.
  */
 const EmbedPage = () => {
-  const { gameId } = useParams();  // Obtener el ID del juego de la URL
+  const { gameId } = useParams(); // Obtener el ID del juego de la URL
 
   return (
-    <div 
-      style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        width: '100vw', 
-        height: '100vh', 
-        margin: 0, 
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100vw',
+        height: '100vh',
+        margin: 0,
         padding: 0,
-        overflow: 'hidden',  // Evita el scroll en caso de que el contenido sea mayor que la ventana
+        overflow: 'hidden', // Evita el scroll
       }}
     >
       <iframe
-        src={`https://h5p.org/h5p/embed/${gameId}`}
+        src={`https://infraplay.h5p.com/content/${gameId}/embed`}
         width="100%"
         height="100%"
         frameBorder="0"
         allowFullScreen
         title="H5P Content"
-        style={{ 
+        style={{
           display: 'block',
-          maxWidth: '100%',
-          maxHeight: '100%',
-        }} 
+          border: 'none', // Asegura que no haya bordes del iframe
+          width: '100%',  // Ajusta al ancho completo del contenedor
+          height: '100%', // Ajusta al alto completo del contenedor
+        }}
       />
       <script
         src="https://h5p.org/sites/all/modules/h5p/library/js/h5p-resizer.js"

@@ -106,10 +106,10 @@ export const addUser = async (e, setValidated) => {
  * @method deleteUser
  * @param {Object} e Event
  */
-export const deleteUser = async (e) => {
+export const deleteUser = async (userName) => {
   try {
     await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/deleteUser`, {
-      userName: e.currentTarget.id,
+      userName: userName,
     });
     //window.location.reload();
   } catch (error) {
@@ -227,13 +227,12 @@ export const Register = async (e, setValidated, profilePicture) => {
     });
 
     console.log("Registro exitoso:", response.data);
-    window.location.replace("/"); 
   } catch (error) {
     console.error("Error al registrar el usuario:", error);
     if (error.response) {
-      alert(error.response.data.msg); 
+      //alert(error.response.data.msg); 
     } else {
-      alert("Ocurrió un error inesperado."); 
+      //alert("Ocurrió un error inesperado."); 
     }
   }
 };
@@ -251,6 +250,33 @@ export const toggleUserVerification = async (userName, token) => {
   } catch (error) {
     console.error("Error al actualizar la verificación del usuario:", error);
     throw error;
+  }
+};
+
+/**
+ * Update the profile picture of a user
+ * @method updateProfilePicture
+ * @param {string} userId - ID of the user
+ * @param {string} profilePicture - Base64 encoded image data
+ * @returns {Object} Response message
+ */
+export const updateProfilePicture = async (userId, profilePicture) => {
+  try {
+    const base64Data = profilePicture.split(',')[1];
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    const user = await Users.findOne({ where: { id: userId } });
+    if (!user) {
+      return { success: false, msg: "User not found" };
+    }
+
+    user.profilePicture = buffer; // Update the profile picture in the database
+    await user.save();
+
+    return { success: true, msg: "Profile picture updated successfully" };
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    return { success: false, msg: "Error updating profile picture" };
   }
 };
 
