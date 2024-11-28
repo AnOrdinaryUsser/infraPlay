@@ -63,6 +63,9 @@ export const Register = async (req, res) => {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // Token válido por 24 horas
 
+    console.log("HOLA: ");
+    console.log(profilePicture.slice(0, 50));
+
     try {
         const newUser = await Users.create({
             name: name,
@@ -287,36 +290,37 @@ export const toggleUserVerification = async (req, res) => {
     }
 };
 
-/**
- * Update a user's profile picture
- * @method updateProfilePicture
- * @route PUT /users/profile-picture
- */
 export const updateProfilePicture = async (req, res) => {
-    const { userId, profilePicture } = req.body;
-  
-    if (!profilePicture) {
-      return res.status(400).json({ msg: "Profile picture is required" });
+    const { userName, base64Data } = req.body;
+
+    console.log(base64Data.slice(0, 50));
+
+    if (!base64Data) {
+        return res.status(400).json({ msg: "No image provided" });
     }
-  
+
     try {
-      const base64Data = profilePicture.split(',')[1];
-      const buffer = Buffer.from(base64Data, 'base64');
-  
-      const user = await Users.findOne({ where: { id: userId } });
-      if (!user) {
-        return res.status(404).json({ msg: "User not found" });
-      }
-  
-      user.profilePicture = buffer;
-      await user.save();
-  
-      return res.json({ msg: "Profile picture updated successfully" });
+
+        const user = await Users.findOne({ where: { userName: userName } });
+
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        // Guardamos la imagen en formato Base64
+        user.profilePicture = base64Data ? Buffer.from(base64Data, 'base64') : null;
+        console.log("Profile: ");
+        console.log(user.profilePicture.slice(0, 50));
+        user.save({fields: ['profilePicture']})
+        await user.reload();   
+
+        res.json({ msg: "Profile picture updated successfully" });
     } catch (error) {
-      console.error("Error updating profile picture:", error);
-      return res.status(500).json({ msg: "Error updating profile picture" });
+        console.error(error);
+        res.status(500).json({ msg: "Error updating profile picture" });
     }
-  };
+};
+
   
   
   

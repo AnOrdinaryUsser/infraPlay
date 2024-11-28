@@ -34,7 +34,7 @@ export const refreshToken = async (req, res) => {
             const profilePicture = user[0].profilePicture
                 ? Buffer.from(user[0].profilePicture).toString('base64')  // Convertir a base64
                 : null;
-
+            console.log(profilePicture.slice(0, 50));
             const accessToken = jwt.sign(
                 { userId, name, surname, userName, institute, email, role },
                 process.env.ACCESS_TOKEN_SECRET,

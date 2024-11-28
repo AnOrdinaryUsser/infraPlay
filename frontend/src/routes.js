@@ -5,6 +5,8 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const UsersDashboard = React.lazy(() => import('./views/dashboard/UsersDashboard'))
 const Sections = React.lazy(() => import('./views/sections/Sections'))
 const Games = React.lazy(() => import('./views/games/Games'))
+const Statistics = React.lazy(() => import('./views/statistics/Statistics'))
+const Session = React.lazy(() => import('./views/statistics/Session'))
 
 
 const routes = [
@@ -14,6 +16,8 @@ const routes = [
   { path: '/usersDashboard', name: 'usersDashboard', element: UsersDashboard },
   { path: '/sections', name: 'sections', element: Sections },
   { path: '/games', name: 'games', element: Games },
+  { path: '/statistics', name: 'statistics', element: Statistics },
+  { path: '/session', name: 'session', element: Session },
 ]
 
 export default routes

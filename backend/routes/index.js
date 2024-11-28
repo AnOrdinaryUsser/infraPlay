@@ -8,6 +8,7 @@ import { refreshToken } from "../controllers/RefreshToken.js";
 import { recoverPassword, resetPassword } from "../controllers/Mail.js";
 import { getSections, getSection, addSection, modifySection, deleteSection } from "../controllers/Sections.js";
 import { AddGame, getGamesBySectionId, EditGame, DeleteGame} from "../controllers/Games.js";
+import { createSessionGroup, uploadSessionData, getSessionStats, getSessionGraphAndStats } from "../controllers/Statistics.js"; // Asegúrate de tener la ruta correcta
 import bodyParser from "body-parser";
  
 const router = express.Router();
@@ -25,7 +26,7 @@ router.post('/login', Login);
 router.get('/token', refreshToken);
 router.delete('/logout', Logout);
 router.get('/verify/:token', verifyUser);
-router.post("/profile-picture", updateProfilePicture);
+router.post('/users/updateProfilePicture', updateProfilePicture);
 
 // Sections
 router.get('/sections/:userName', getSections);
@@ -43,5 +44,12 @@ router.delete('/deleteGame', DeleteGame);
 // Mail
 router.post('/recoverPassword', recoverPassword)
 router.post('/resetPassword', resetPassword)
+
+// Statistics
+router.post("/sessions/groups", createSessionGroup);
+router.post("/sessions/data", uploadSessionData);
+router.get("/sessions/stats", getSessionStats);
+router.get('/sessions/graph-stats/:sessionGroupId', getSessionGraphAndStats);
+
 
 export default router;

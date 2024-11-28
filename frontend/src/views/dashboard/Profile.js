@@ -15,7 +15,7 @@ import {
   CModalBody,
   CModalFooter,
 } from "@coreui/react";
-import { refreshToken, modifyUser } from "../../services/UserService.js";
+import { refreshToken, modifyUser, updateProfilePicture } from "../../services/UserService.js";
 import { cilPencil } from "@coreui/icons";
 import cameraIcon from "../../assets/images/camera.png";
 
@@ -48,34 +48,52 @@ const Profile = () => {
     setModalVisible(true);
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setNewProfilePicture(file);
-  };
+// const handleFileChange = (e) => {
+//   const file = e.target.files[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     const img = new Image();
+//     reader.onload = function (event) {
+//       img.src = event.target.result;
+//       img.onload = function () {
+//         if (img.width === img.height) {
+//           const base64 = reader.result;
+//           setNewProfilePicture(base64);
+//         } else {
+//           alert("La imagen debe ser cuadrada (igual ancho y alto).");
+//           e.target.value = "";
+//           setNewProfilePicture(null);
+//         }
+//       };
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// };
 
-  const handleSaveProfilePicture = async () => {
+const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+          setNewProfilePicture(reader.result); // Imagen en Base64 
+          console.log(reader.result)
+      };
+      reader.readAsDataURL(file);
+  }
+};
+
+const handleSaveProfilePicture = async () => {
     if (newProfilePicture) {
-      const formData = new FormData();
-      formData.append("profilePicture", newProfilePicture);
-
-      try {
-        const response = await axios.post(
-          `http://${IP_SERVER}:${PORT_BACKEND}/updateProfilePicture`, // Asegúrate de que esta ruta sea correcta
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        setProfilePicture(response.data.profilePictureUrl); // Actualizamos la imagen de perfil
-        setModalVisible(false); // Cerramos el modal después de guardar
-      } catch (error) {
-        console.error("Error al actualizar la imagen de perfil:", error);
-      }
+        try {
+            console.log(newProfilePicture)
+            await updateProfilePicture(userName, newProfilePicture); // Llamada al servicio
+            setProfilePicture(newProfilePicture); // Actualizamos la imagen localmente
+            setModalVisible(false); // Cerramos el modal
+        } catch (error) {
+            console.error("Error al actualizar la imagen de perfil:", error);
+        }
     }
-  };
+};
 
   useEffect(() => {
     refreshToken(

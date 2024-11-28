@@ -253,31 +253,29 @@ export const toggleUserVerification = async (userName, token) => {
   }
 };
 
-/**
- * Update the profile picture of a user
- * @method updateProfilePicture
- * @param {string} userId - ID of the user
- * @param {string} profilePicture - Base64 encoded image data
- * @returns {Object} Response message
- */
-export const updateProfilePicture = async (userId, profilePicture) => {
-  try {
-    const base64Data = profilePicture.split(',')[1];
-    const buffer = Buffer.from(base64Data, 'base64');
-
-    const user = await Users.findOne({ where: { id: userId } });
-    if (!user) {
-      return { success: false, msg: "User not found" };
+export const updateProfilePicture = async (userName, profilePicture) => {
+    try {
+        console.log("Hola");
+        console.log(profilePicture);
+        let base64Data = null;
+        if (typeof profilePicture === 'string') {
+          base64Data = profilePicture.split(',')[1];
+        } else {
+          console.error('profilePicture no es una cadena');
+        }
+        console.log("Hola1");
+        console.log(base64Data);
+        const response = await axios.post(
+            `http://${IP_SERVER}:${PORT_BACKEND}/users/updateProfilePicture`,
+            { userName, base64Data },
+        );
+        return response.data.msg; // Mensaje de éxito
+    } catch (error) {
+        console.error("Error updating profile picture:", error);
+        throw error;
     }
-
-    user.profilePicture = buffer; // Update the profile picture in the database
-    await user.save();
-
-    return { success: true, msg: "Profile picture updated successfully" };
-  } catch (error) {
-    console.error("Error updating profile picture:", error);
-    return { success: false, msg: "Error updating profile picture" };
-  }
 };
+
+
 
 
