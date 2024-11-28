@@ -93,6 +93,7 @@ const AdminDashboard = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
+      console.log(profilePicture)
       Register(e, setValidated, profilePicture);
       setTimeout(() => {
         setVisible(false); // Cierra la ventana de registro después de 1 segundo
@@ -102,7 +103,7 @@ const AdminDashboard = () => {
       setTimeout(() => {
         setSuccessModal(false); // Muestra la ventana modal de éxito
         getUsers(setUsers, token, axiosJWT); // Actualiza la lista de usuarios
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error("Error al registrar usuario:", error);
     }
@@ -114,7 +115,7 @@ const AdminDashboard = () => {
       setTimeout(() => {
         setDeleteSuccessModal(false); // Cierra el modal de éxito después de 1 segundo
         getUsers(setUsers, token, axiosJWT); // Refresca la lista de usuarios
-      }, 3000);
+      }, 2000);
       setDeleteSuccessModal(true); // Muestra el modal de éxito
       getUsers(setUsers, token, axiosJWT); // Refresca la lista de usuarios
     } catch (error) {
