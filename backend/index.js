@@ -6,8 +6,7 @@ import bcrypt from "bcrypt";
 import db from "./config/AuthDB.js";
 import router from "./routes/index.js";
 import Users from "./models/UserModel.js";
-import Sections from "./models/SectionsModel.js";
-import Games from "./models/GameModel.js";
+import models from "./models/GamesSectionsModel.js";
 import { Sequelize } from "sequelize";
 import fs from 'fs';
 import bodyParser from "body-parser";
@@ -19,6 +18,8 @@ const { DataTypes } = Sequelize;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const IP_SERVER = process.env.IP_SERVER;
 const PORT_FRONTEND = process.env.PORT_FRONTEND;
+const { Games, Sections } = models;
+
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));

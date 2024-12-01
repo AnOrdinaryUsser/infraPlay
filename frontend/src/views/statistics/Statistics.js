@@ -18,13 +18,15 @@ import {
   CForm,
   CFormLabel,
   CFormInput,
+  CInputGroup,
+  CInputGroupText,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { useNavigate } from 'react-router-dom';
-import { cilChart, cilXCircle } from "@coreui/icons";
+import { cilChart, cilXCircle, cilImage, cilDescription, cilTrash } from "@coreui/icons";
 import Papa from "papaparse"; // Importa PapaParse para procesar el CSV
 import { refreshToken } from "../../services/UserService.js";
-import { uploadSessionData, fetchSessionStats } from "../../services/StatisticsService.js"; // Importa el servicio
+import { uploadSessionData, fetchSessionStats, deleteSession } from "../../services/StatisticsService.js"; // Importa el servicio
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
@@ -122,6 +124,19 @@ const Statistics = () => {
     });
   };
 
+  const handleDeleteSession = async (sessionGroupId) => {
+    const confirmation = window.confirm("¿Estás seguro de que deseas eliminar esta sesión?");
+    if (confirmation) {
+      try {
+        await deleteSession(sessionGroupId);
+        // Aquí puedes actualizar la lista de estadísticas después de eliminar la sesión
+        setStats(stats.filter(game => game.sessionGroupId !== sessionGroupId));
+      } catch (error) {
+        console.error("Error al eliminar la sesión:", error);
+      }
+    }
+  };
+
   return (
     <>
       <h1 className="mb-4">Estadísticas de Juegos</h1>
@@ -161,6 +176,18 @@ const Statistics = () => {
                       >
                         <CIcon size="xs" icon={cilChart} />
                       </CButton>
+                      {/* Botón para eliminar */}
+                      <CButton
+                        style={{
+                          backgroundColor: "#f44336",
+                          borderColor: "#f44336",
+                          marginLeft: '10px'
+                        }}
+                        size="sm"
+                        onClick={() => handleDeleteSession(game.sessionGroupId)}
+                      >
+                        <CIcon size="xs" icon={cilTrash} />
+                      </CButton>
                     </CTableDataCell>
                   </CTableRow>
                 );
@@ -174,27 +201,32 @@ const Statistics = () => {
           style={{ color: "white" }}
           onClick={() => setVisible(true)}
         >
-          Ver estadísticas
+          Subir sesión de juego
         </CButton>
 
         {/* Modal */}
         <CModal visible={visible} onClose={() => setVisible(false)}>
-          <CModalHeader>Subir Estadísticas</CModalHeader>
+          <CModalHeader>Subir estadísticas</CModalHeader>
           <CModalBody>
             <CForm>
-              <CFormLabel>Nombre de la sesión</CFormLabel>
-              <CFormInput
+            <CInputGroup className="mb-3">
+            <CFormInput
                 type="text"
                 value={sessionName}
                 onChange={(e) => setSessionName(e.target.value)}
                 placeholder="Introduce el nombre de la sesión"
               />
-              <CFormLabel>Archivo CSV</CFormLabel>
+              </CInputGroup>
+              <CInputGroup className="mb-3">
+              <CInputGroupText>
+                  <CIcon icon={cilDescription} />
+                </CInputGroupText>
               <CFormInput
                 type="file"
                 accept=".csv"
                 onChange={handleFileChange}
               />
+              </CInputGroup>
             </CForm>
           </CModalBody>
           <CModalFooter>

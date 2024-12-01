@@ -63,28 +63,30 @@ export const deleteGame = async (gameId) => {
  * @param {String} gameImg Base64 encoded image data
  * @param {Number} sectionId Integer for identify a section
  */
-export const editGame = async (gameId, gameName, gameUrl, gameImage) => {
+export const editGame = async (gameId, gameName, gameUrl, gameImage, sectionId) => {
     try {
-        let base64Data = null;
-        if (typeof gameImage === 'string') {
-            base64Data = gameImage.split(',')[1];
-        } else {
-            console.error('gameImage no es una cadena');
-        }
-        
-        const response = await axios.put(`http://${IP_SERVER}:${PORT_BACKEND}/editGame`, {
-            gameId: gameId,
-            gameName: gameName,
-            gameUrl: gameUrl,
-            gameImage: base64Data,
-        });
-
-        return response.data;
+      let base64Data = null;
+      if (typeof gameImage === 'string') {
+        base64Data = gameImage.split(',')[1];
+      } else {
+        console.error('gameImage no es una cadena');
+      }
+  
+      const response = await axios.put(`http://${IP_SERVER}:${PORT_BACKEND}/editGame`, {
+        gameId: gameId,
+        gameName: gameName,
+        gameUrl: gameUrl,
+        gameImage: base64Data,
+        sectionId: sectionId, // Incluye el sectionId
+      });
+  
+      return response.data;
     } catch (error) {
-        console.error("Error editing game:", error);
-        throw error;
+      console.error("Error editing game:", error);
+      throw error;
     }
-};
+  };
+  
 
 
 /**
@@ -94,7 +96,7 @@ export const editGame = async (gameId, gameName, gameUrl, gameImage) => {
  */
 export const getGamesBySectionId = async (sectionId) => {
     try {
-        const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/games`, {
+        const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/gamesSectionId`, {
             params: { sectionId }
         });
         return response.data;
@@ -103,6 +105,21 @@ export const getGamesBySectionId = async (sectionId) => {
         throw error;
     }
 };
+
+/**
+ * Function to get all games
+ * @method getAllGamesWithSections
+ */
+export const getAllGamesWithSections = async () => {
+    try {
+      const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/games`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching games with sections:', error);
+      throw error;
+    }
+  };
+
 
 
 

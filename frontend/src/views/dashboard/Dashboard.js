@@ -65,6 +65,7 @@ const Dashboard = () => {
   const [sectionRows, setSectionRows] = useState(0);
   const [sectionCols, setSectionCols] = useState(0);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [validated, setValidated] = useState(false);
   const [selectedSection, setSelectedSection] = useState(null);
   const [editSectionName, setEditSectionName] = useState("");
   const [editSectionRows, setEditSectionRows] = useState(0);

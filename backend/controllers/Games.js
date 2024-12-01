@@ -1,4 +1,6 @@
-import Games from "../models/GameModel.js";  // Asegúrate de que la ruta sea correcta
+import models from "../models/GamesSectionsModel.js"; // models ahora contiene { SessionGroups, SessionData }
+
+const { Games, Sections } = models;
 
 /**
  * Module to add a game
@@ -56,7 +58,7 @@ export const getGamesBySectionId = async (req, res) => {
 /**
  * Module to edit a game
  * @module EditGame
- */
+
 export const EditGame = async (req, res) => {
     const { gameId, gameName, gameUrl, gameImage } = req.body;
 
@@ -82,6 +84,36 @@ export const EditGame = async (req, res) => {
         res.status(500).json({ msg: "Error editing game" });
     }
 };
+ */
+
+export const EditGame = async (req, res) => {
+    const { gameId, gameName, gameUrl, gameImage, sectionId } = req.body;
+  
+    try {
+      const game = await Games.findByPk(gameId);
+  
+      if (!game) {
+        return res.status(404).json({ msg: "Game not found" });
+      }
+  
+      // Actualiza los detalles del juego
+      game.name = gameName || game.name;
+      game.gameUrl = gameUrl || game.gameUrl;
+      if (gameImage) {
+        game.image = Buffer.from(gameImage, 'base64'); // Convertir base64 a Buffer
+      }
+      if (sectionId) {
+        game.sectionId = sectionId; // Actualiza el ID de la sección
+      }
+  
+      await game.save();
+  
+      res.json({ msg: "Game updated successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: "Error editing game" });
+    }
+  };   
 
 /**
  * Module to delete a game
@@ -105,4 +137,32 @@ export const DeleteGame = async (req, res) => {
         res.status(500).json({ msg: "Error deleting game" });
     }
 };
+
+export const getAllGamesWithSections = async (req, res) => {
+  try {
+    const games = await Games.findAll({
+      include: [
+        {
+          model: Sections,
+          attributes: ['name'], // Solo queremos el nombre de la sección
+        },
+      ],
+    });
+    //console.log(games[0].section.name);
+
+    // Transformar los datos para incluir el nombre de la sección directamente en cada juego
+    const result = games.map(game => ({
+      id: game.id,
+      name: game.name,
+      gameUrl: game.gameUrl,
+      sectionName: game.section?.name || null, // Manejar casos donde no haya sección
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching games with sections:', error);
+    res.status(500).json({ error: 'Error fetching games with sections' });
+  }
+};
+
 

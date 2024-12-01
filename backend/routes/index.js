@@ -7,9 +7,10 @@ import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
 import { recoverPassword, resetPassword } from "../controllers/Mail.js";
 import { getSections, getSection, addSection, modifySection, deleteSection } from "../controllers/Sections.js";
-import { AddGame, getGamesBySectionId, EditGame, DeleteGame} from "../controllers/Games.js";
-import { createSessionGroup, uploadSessionData, getSessionStats, getSessionGraphAndStats } from "../controllers/Statistics.js"; // Asegúrate de tener la ruta correcta
+import { AddGame, getGamesBySectionId, EditGame, DeleteGame, getAllGamesWithSections} from "../controllers/Games.js";
+import { createSessionGroup, uploadSessionData, getSessionStats, getSessionGraphAndStats, deleteSession } from "../controllers/Statistics.js"; // Asegúrate de tener la ruta correcta
 import bodyParser from "body-parser";
+import { getSensorValues, saveSensorValues } from "../controllers/Sensor.js";
  
 const router = express.Router();
 
@@ -37,9 +38,10 @@ router.delete('/section/:id', deleteSection);
 
 // Games
 router.post('/addGame', AddGame);
-router.get('/games', getGamesBySectionId);
+router.get('/gamesSectionId', getGamesBySectionId);
 router.put('/editGame', EditGame);
 router.delete('/deleteGame', DeleteGame);
+router.get('/games', getAllGamesWithSections);
 
 // Mail
 router.post('/recoverPassword', recoverPassword)
@@ -50,6 +52,13 @@ router.post("/sessions/groups", createSessionGroup);
 router.post("/sessions/data", uploadSessionData);
 router.get("/sessions/stats", getSessionStats);
 router.get('/sessions/graph-stats/:sessionGroupId', getSessionGraphAndStats);
+router.delete('/sessions/:sessionGroupId', deleteSession);
+
+//Sensor
+router.get('/sensor', getSensorValues);
+router.post('/sensor', saveSensorValues);
+
+
 
 
 export default router;

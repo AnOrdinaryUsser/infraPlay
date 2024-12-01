@@ -216,5 +216,33 @@ export const getSessionGraphAndStats = async (req, res) => {
   }
 };
 
+export const deleteSession = async (req, res) => {
+  const { sessionGroupId } = req.params;  // Obtenemos el sessionGroupId desde los parámetros de la URL
+
+  try {
+    // Buscar la sesión con el sessionGroupId
+    const session = await SessionGroups.findOne({ where: { id: sessionGroupId } });
+
+    if (!session) {
+      // Si no se encuentra la sesión, respondemos con un error 404
+      return res.status(404).json({ error: 'Sesión no encontrada' });
+    }
+
+    // Eliminar los datos de la sesión en session_data
+    await SessionData.destroy({ where: { sessionGroupId } });
+
+    // Ahora, eliminar la sesión en la tabla sessions
+    await session.destroy();  // Eliminar la sesión de la base de datos
+
+    // Responder con un mensaje de éxito
+    res.status(200).json({ message: 'Sesión y datos asociados eliminados con éxito' });
+
+  } catch (error) {
+    // Manejo de errores en caso de que algo falle
+    console.error("Error al eliminar la sesión o los datos:", error);
+    res.status(500).json({ error: 'Error al eliminar la sesión o los datos' });
+  }
+};
+
 
 

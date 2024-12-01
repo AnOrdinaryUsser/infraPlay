@@ -45,7 +45,7 @@ const Login = () => {
           position: "absolute", 
           top: "20px", 
           left: "20px", 
-          width: "150px",
+          width: "200px",
         }} 
       />
       

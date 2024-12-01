@@ -7,6 +7,7 @@ const Sections = React.lazy(() => import('./views/sections/Sections'))
 const Games = React.lazy(() => import('./views/games/Games'))
 const Statistics = React.lazy(() => import('./views/statistics/Statistics'))
 const Session = React.lazy(() => import('./views/statistics/Session'))
+const ScreenConf = React.lazy(() => import('./views/screenConf/ScreenConf'))
 
 
 const routes = [
@@ -18,6 +19,7 @@ const routes = [
   { path: '/games', name: 'games', element: Games },
   { path: '/statistics', name: 'statistics', element: Statistics },
   { path: '/session', name: 'session', element: Session },
+  { path: '/screenConf', name: 'screenConf', element: ScreenConf },
 ]
 
 export default routes

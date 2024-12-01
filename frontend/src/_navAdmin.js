@@ -4,7 +4,7 @@ import {
   cilPeople,
   cilUser,
   cilSpreadsheet,
-  cilImage,
+  cilSettings,
   cilGamepad,
   cilGrid,
   cilChart,
@@ -48,6 +48,16 @@ const _nav = [
     name: 'Datos',
     to: '/statistics',
     icon: <CIcon icon={cilChart} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: "Sensor",
+  },
+  {
+    component: CNavItem,
+    name: 'Configuración',
+    to: '/screenConf',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,
