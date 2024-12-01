@@ -3,10 +3,10 @@ import CIcon from '@coreui/icons-react'
 import {
   cilUser,
   cilSpreadsheet,
-  cilImage,
   cilGrid,
   cilGamepad,
   cilChart,
+  cilSettings,
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 
@@ -47,6 +47,16 @@ const _nav = [
     name: 'Datos',
     to: '/statistics',
     icon: <CIcon icon={cilChart} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: "Sensor",
+  },
+  {
+    component: CNavItem,
+    name: 'Configuración',
+    to: '/screenConf',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,

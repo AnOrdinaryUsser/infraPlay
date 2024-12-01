@@ -74,3 +74,12 @@ export const fetchSessionGraphAndStats = async (sessionGroupId) => {
       throw error;
   }
 };
+
+export const deleteSession = async (sessionGroupId) => {
+  try {
+    const response = await axios.delete(`http://${IP_SERVER}:${PORT_BACKEND}/sessions/${sessionGroupId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al eliminar la sesión');
+  }
+};

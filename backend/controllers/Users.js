@@ -140,7 +140,6 @@ export const verifyUser = async (req, res) => {
         user.verificationToken = null; // Opcional: Limpia el token después de verificar
         user.verificationExpires = null; // Opcional: Limpia la expiración
         await user.save();
-
         res.json({ msg: "Account successfully verified" });
     } catch (error) {
         console.error(error);

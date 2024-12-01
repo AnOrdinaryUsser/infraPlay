@@ -1,7 +1,9 @@
 /**
  * @file Controller to handle frontend sections requests
  */
-import Sections from "../models/SectionsModel.js";
+import models from "../models/GamesSectionsModel.js"; // models ahora contiene { SessionGroups, SessionData }
+
+const { Games, Sections } = models;
 
 /**
  * Module to get all sections by userName

@@ -4,6 +4,7 @@
  */
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
@@ -238,6 +239,7 @@ export const Register = async (e, setValidated, profilePicture) => {
 };
 
 export const toggleUserVerification = async (userName, token) => {
+  const navigate = useNavigate();
   try {
     await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/users/verify`, 
       { userName }, 
@@ -247,7 +249,9 @@ export const toggleUserVerification = async (userName, token) => {
         }
       }
     );
+    navigate("/registerEmail"); 
   } catch (error) {
+    navigate("/tokenVerified"); 
     console.error("Error al actualizar la verificación del usuario:", error);
     throw error;
   }

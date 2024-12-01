@@ -23,7 +23,7 @@ import CIcon from "@coreui/icons-react";
 import { cilTrash, cilImage, cilPencil } from "@coreui/icons";
 import { refreshToken } from "../../services/UserService.js";
 import { getSections } from "../../services/SectionService.js";
-import { addGame, getGamesBySectionId, editGame, deleteGame } from "../../services/GameService.js";
+import { addGame, getGamesBySectionId, editGame, deleteGame, getAllGamesWithSections } from "../../services/GameService.js";
 
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
@@ -57,9 +57,11 @@ const Games = () => {
   const [expire, setExpire] = useState("");
 
   // States for game form
+  const [gameId, setGameId] = useState("");
   const [gameName, setGameName] = useState("");
   const [gameUrl, setGameUrl] = useState("");
   const [gameImage, setGameImage] = useState(null);
+  const [selectedSectionId, setSelectedSectionId] = useState(null);
 
   useEffect(() => {
     // Refresh token and get user info
@@ -81,20 +83,19 @@ const Games = () => {
   }, [userName]);
 
   useEffect(() => {
-    const fetchGames = async () => {
-      if (sections[activeKey]) {
-        try {
-          const sectionId = sections[activeKey].id;
-          const gamesData = await getGamesBySectionId(sectionId);
-          setGames(gamesData);
-          console.log(gamesData);
-        } catch (error) {
-          console.error("Error fetching games", error);
-        }
+    const fetchGamesWithSections = async () => {
+      try {
+        const gamesData = await getAllGamesWithSections();
+        console.log(gamesData);
+        setGames(gamesData);
+        console.log(gamesData);
+      } catch (error) {
+        console.error('Error fetching games with sections:', error);
       }
     };
-    fetchGames();
-  }, [activeKey, sections]);
+  
+    fetchGamesWithSections();
+  }, []);  
 
   const axiosJWT = axios.create();
 
@@ -118,18 +119,21 @@ const Games = () => {
   const handleAddGame = async (e) => {
     e.preventDefault();
     try {
-        const sectionId = sections[activeKey].id; 
-        console.log(gameImage);
-        const response = await addGame(gameName, gameUrl, gameImage, sectionId);
-        console.log(response.msg); 
-        // Refetch games after adding a new one
-        const gamesData = await getGamesBySectionId(sectionId);
-        setGames(gamesData);
-        setAddGameModalVisible(false);
+      const sectionId = sections[activeKey]?.id; // Obtiene el ID de la sección seleccionada
+      console.log(gameImage);
+      
+      // Llama al servicio para agregar el juego
+      const response = await addGame(gameName, gameUrl, gameImage, sectionId);
+      console.log(response.msg);
+      
+      // Refetch de los juegos después de agregar uno nuevo
+      const gamesData = await getAllGamesWithSections();
+      setGames(gamesData);
+      setAddGameModalVisible(false);
     } catch (error) {
-        console.error("Error adding game:", error);
+      console.error("Error adding game:", error);
     }
-  };
+  };  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -149,28 +153,36 @@ const Games = () => {
 
   const handleEditButtonClick = (game) => {
     setGameToEdit(game);
+    setGameId(game.id); // Establece el ID del juego seleccionado
     setGameName(game.name);
     setGameUrl(game.gameUrl);
+    setSelectedSectionId(game.sectionId); // Si `sectionId` está disponible en el objeto `game`
     setEditGameModalVisible(true);
-  };
+  };  
 
   const handleEditGame = async (e) => {
-      e.preventDefault();
-      try {
-          await editGame(gameToEdit.id, gameName, gameUrl, gameImage);
-          const gamesData = await getGamesBySectionId(sections[activeKey].id);
-          setGames(gamesData);
-          setEditGameModalVisible(false);
-      } catch (error) {
-          console.error("Error editing game:", error);
-      }
+    e.preventDefault();
+    console.log(gameId);
+    try {
+      // Llamada al servicio para editar el juego
+      const response = await editGame(gameId, gameName, gameUrl, gameImage, selectedSectionId);
+      console.log(response.msg);
+  
+      // Actualizar la lista de juegos después de la edición
+      const gamesData = await getAllGamesWithSections();
+      setGames(gamesData);
+      setEditGameModalVisible(false);
+    } catch (error) {
+      console.error("Error editing game:", error);
+    }
   };
+  
 
   const handleDeleteGame = async (gameId) => {
       if (window.confirm("¿Estás seguro de que deseas eliminar este juego?")) {
           try {
               await deleteGame(gameId);
-              const gamesData = await getGamesBySectionId(sections[activeKey].id);
+              const gamesData = await getAllGamesWithSections();
               setGames(gamesData);
           } catch (error) {
               console.error("Error deleting game:", error);
@@ -188,6 +200,7 @@ const Games = () => {
               <CTableHeaderCell scope="col">#</CTableHeaderCell>
               <CTableHeaderCell scope="col">Nombre</CTableHeaderCell>
               <CTableHeaderCell scope="col">URL</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Sección</CTableHeaderCell>
               <CTableHeaderCell scope="col"></CTableHeaderCell>
             </CTableRow>
           </CTableHead>
@@ -198,6 +211,7 @@ const Games = () => {
                   <CTableDataCell>{index}</CTableDataCell>
                   <CTableDataCell>{game.name}</CTableDataCell>
                   <CTableDataCell>{game.gameUrl}</CTableDataCell>
+                  <CTableDataCell>{game.sectionName}</CTableDataCell>
                   <CTableDataCell>
                     <CButton
                       style={{ backgroundColor: "#3a8cbe", borderColor: "#3a8cbe", marginRight: "5px" }}
@@ -239,6 +253,7 @@ const Games = () => {
           </CModalHeader>
           <CModalBody>
             <CForm onSubmit={handleAddGame}>
+              {/* Campo para el nombre del juego */}
               <CInputGroup className="mb-3">
                 <CFormInput
                   placeholder="Nombre del juego"
@@ -247,6 +262,8 @@ const Games = () => {
                   required
                 />
               </CInputGroup>
+              
+              {/* Campo para la URL del juego */}
               <CInputGroup className="mb-3">
                 <CFormInput
                   type="url"
@@ -256,6 +273,8 @@ const Games = () => {
                   required
                 />
               </CInputGroup>
+              
+              {/* Campo para subir imagen */}
               <CInputGroup className="mb-3">
                 <CInputGroupText>
                   <CIcon icon={cilImage} />
@@ -268,6 +287,23 @@ const Games = () => {
                   required
                 />
               </CInputGroup>
+              
+              {/* Desplegable para seleccionar la sección */}
+              <CInputGroup className="mb-3">
+                <select
+                  className="form-select"
+                  onChange={(e) => setActiveKey(Number(e.target.value))} // Actualiza el estado con el índice de la sección seleccionada
+                  required
+                >
+                  <option value="" disabled selected>Selecciona una sección</option>
+                  {sections.map((section, index) => (
+                    <option key={section.id} value={index}>
+                      {section.name}
+                    </option>
+                  ))}
+                </select>
+              </CInputGroup>
+              
               <div className="d-grid">
                 <CButton type="submit" color="success" aria-pressed="true">
                   Añadir Juego
@@ -282,48 +318,64 @@ const Games = () => {
           onClose={() => setEditGameModalVisible(false)}
         >
           <CModalHeader onClose={() => setEditGameModalVisible(false)}>
-              <CModalTitle>Editar Juego</CModalTitle>
+            <CModalTitle>Editar Juego</CModalTitle>
           </CModalHeader>
           <CModalBody>
-              <CForm onSubmit={handleEditGame}>
-                  <CInputGroup className="mb-3">
-                      <CFormInput
-                          placeholder="Nombre del juego"
-                          id="editGameName"
-                          value={gameName}
-                          onChange={(e) => setGameName(e.target.value)}
-                          required
-                      />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
-                      <CFormInput
-                          type="url"
-                          placeholder="URL del juego"
-                          id="editGameUrl"
-                          value={gameUrl}
-                          onChange={(e) => setGameUrl(e.target.value)}
-                          required
-                      />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
-                      <CInputGroupText>
-                          <CIcon icon={cilImage} />
-                      </CInputGroupText>
-                      <CFormInput
-                          type="file"
-                          id="editGameImage"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                      />
-                  </CInputGroup>
-                  <div className="d-grid">
-                      <CButton type="submit" color="success" aria-pressed="true">
-                          Guardar Cambios
-                      </CButton>
-                  </div>
-              </CForm>
+            <CForm onSubmit={handleEditGame}>
+              <CInputGroup className="mb-3">
+                <CFormInput
+                  placeholder="Nombre del juego"
+                  id="editGameName"
+                  value={gameName}
+                  onChange={(e) => setGameName(e.target.value)}
+                  required
+                />
+              </CInputGroup>
+              <CInputGroup className="mb-3">
+                <CFormInput
+                  type="url"
+                  placeholder="URL del juego"
+                  id="editGameUrl"
+                  value={gameUrl}
+                  onChange={(e) => setGameUrl(e.target.value)}
+                  required
+                />
+              </CInputGroup>
+              <CInputGroup className="mb-3">
+                <CInputGroupText>
+                  <CIcon icon={cilImage} />
+                </CInputGroupText>
+                <CFormInput
+                  type="file"
+                  id="editGameImage"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </CInputGroup>
+              <CInputGroup className="mb-3">
+                <select
+                  value={selectedSectionId || ""} // Asegúrate de que tenga un valor inicial válido
+                  onChange={(e) => setSelectedSectionId(e.target.value)}
+                  id="editGameSection"
+                  required
+                  className="form-select"
+                >
+                  <option value="">Seleccionar Sección</option>
+                  {sections.map((section) => (
+                    <option key={section.id} value={section.id}>
+                      {section.name}
+                    </option>
+                  ))}
+                </select>
+              </CInputGroup>
+              <div className="d-grid">
+                <CButton type="submit" color="success" aria-pressed="true">
+                  Guardar Cambios
+                </CButton>
+              </div>
+            </CForm>
           </CModalBody>
-      </CModal>
+        </CModal>
     </>
   );
 };

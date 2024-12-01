@@ -1,10 +1,8 @@
-/**
- * @file Data model for sections
- */
 import { Sequelize } from "sequelize";
 import db from "../config/AuthDB.js";
-import Users from "./UserModel.js"; // Asegúrate de que la ruta sea correcta
- 
+import Users from "./UserModel.js";
+import Game from "./GamesSectionsModel.js"; // Importa el modelo de juegos
+
 const { DataTypes } = Sequelize;
 
 const Sections = db.define('sections', {
@@ -24,19 +22,25 @@ const Sections = db.define('sections', {
         type: DataTypes.STRING,
         allowNull: false,
         references: {
-            model: Users, // Hace referencia a la tabla Users
+            model: Users,
             key: 'userName'
         },
-        onUpdate: 'CASCADE', // Opcional: actualiza automáticamente si el userName en Users cambia
-        onDelete: 'CASCADE', // Opcional: elimina automáticamente las secciones si el usuario es eliminado
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
     }
 }, {
     freezeTableName: true
 });
 
+// Configurar asociaciones
+Sections.associate = (models) => {
+    Sections.hasMany(models.Game, {
+        foreignKey: "sectionId",
+        as: "Games", // Alias para las asociaciones
+    });
+};
+
 // Sincronizar el modelo con la base de datos
 (async () => {
     await db.sync();
-})();
-
-export default Sections;
+})()
