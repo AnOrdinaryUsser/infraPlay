@@ -24,7 +24,7 @@
 * [![Javascript][Javascript]][Javascript-url]
 * [![MySQL][MySQL]][MySQL-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
 ## 🛠️ How to use
 
@@ -44,11 +44,9 @@ Use this commands to execute web app backend:
 nodemon install && nodemon start
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
 ## 📸 Some screenshots
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### 🔑 Login
 
@@ -56,11 +54,15 @@ The login interface features a minimalist and clean design, with a background co
 
 ![login](https://github.com/user-attachments/assets/08894b93-aaa5-42c7-ae20-64f807f18801)
 
+---
+
 ### 🧑‍💻 Profile
 
 The user profile interface is designed to display and allow editing of the user's personal information. It features a simple, well-organized design with a soft color scheme and an easy-to-follow structure.
 
 ![profile](https://github.com/user-attachments/assets/4f641804-4d39-4d9d-a005-32dca1a2d66d)
+
+---
 
 ### 🎲 Games
 
@@ -79,6 +81,8 @@ There may also be options to edit or delete games, as well as buttons to add new
 
 ![games](https://github.com/user-attachments/assets/4ef9e55f-8677-44e0-99d3-a28664e639a1)
 
+---
+
 ### 🗂️ Sections
 
 The “Sections” section displays a table similar to the “Games” section, but with information about the available sections or categories. The table may include:
@@ -88,6 +92,8 @@ The “Sections” section displays a table similar to the “Games” section, 
 - Number of cols of the grid
 
 ![Sections](https://github.com/user-attachments/assets/5a11a695-ea90-4e62-9a55-8f4930997c48)
+
+---
 
 ### 📊 Statistics
 
@@ -107,6 +113,12 @@ In addition, by clicking on the green statistics button, you can access detailed
 - Average maximum score.
 This functionality provides a complete overview of the game performance and allows a detailed analysis of the results obtained.
 
+![image](https://github.com/user-attachments/assets/e72e4a3b-8a7a-41a9-88a0-73b2a6aa7203)
+
+![image](https://github.com/user-attachments/assets/9f02a4c4-82fb-43c6-9605-79e858a48aa8)
+
+---
+
 ### 🔌​ Sensor configuration
 
 The sensor configuration allows adjustment of four essential parameters to optimize the accuracy of the sensor:
@@ -117,6 +129,10 @@ The sensor configuration allows adjustment of four essential parameters to optim
 - Height of the projected screen.
 
 These settings are key to ensuring that the sensor operates accurately, adapting to the physical characteristics of the installation and improving the user experience.
+
+![image](https://github.com/user-attachments/assets/cfe15a81-4a28-42f2-9f8c-37b9a610edff)
+
+---
 
 ### 📋​ User dashboard
 In the “User Dashboard”, users see a more personalized and visually appealing view. Here are displayed:
@@ -130,6 +146,8 @@ In the “User Dashboard”, users see a more personalized and visually appealin
 The design is oriented to the user experience, facilitating navigation and game selection.
 
 ![dashboard](https://github.com/user-attachments/assets/55d07931-b631-431c-80a0-de5c24173cbb)
+
+---
 
 ### 🔧 Admin dashboard
 
@@ -150,10 +168,14 @@ The design focuses on efficient administration and access to key management tool
 
 ![adminDashboard](https://github.com/user-attachments/assets/3aaf7d72-afd8-434d-a547-4cd1296fe312)
 
+---
+
 ## 🎥 Demonstration video
 👀 See InfraPlay in action! Click below to watch a demo showcasing and how to interact with the projected tactile surface
 
 🚀 Watch the video 
+
+---
 
 ## License
 
