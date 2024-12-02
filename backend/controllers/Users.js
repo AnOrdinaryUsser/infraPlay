@@ -7,6 +7,11 @@ import jwt from "jsonwebtoken";
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import { Op } from 'sequelize';
+import dotenv from "dotenv";
+dotenv.config();
+
+const IP_SERVER = process.env.IP_SERVER;
+const PORT_FRONTEND = process.env.PORT_FRONTEND;
 
 /**
  * Module to get all users
@@ -132,7 +137,8 @@ export const verifyUser = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ msg: "Invalid or expired verification token" });
+            //return res.status(400).json({ msg: "Invalid or expired verification token" });
+            return res.redirect(`http://${IP_SERVER}:${PORT_FRONTEND}/TokenVerified`);
         }
 
         // Actualizar el usuario para que esté verificado
@@ -140,10 +146,12 @@ export const verifyUser = async (req, res) => {
         user.verificationToken = null; // Opcional: Limpia el token después de verificar
         user.verificationExpires = null; // Opcional: Limpia la expiración
         await user.save();
+        res.redirect(`http://${IP_SERVER}:${PORT_FRONTEND}/RegisterEmail`);
         res.json({ msg: "Account successfully verified" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error verifying user" });
+        res.redirect(`http://${IP_SERVER}:${PORT_FRONTEND}/TokenVerified`);
+        //res.status(500).json({ msg: "Error verifying user" });
     }
 };
 
@@ -281,11 +289,13 @@ export const toggleUserVerification = async (req, res) => {
   
       user.verified = user.verified === 1 ? 0 : 1; // Alternar el estado de verificación
       await user.save();
-  
-      res.status(200).json({ msg: 'Estado de verificación actualizado' });
+      
+      res.redirect('/registeredEmail');
+      //res.status(200).json({ msg: 'Estado de verificación actualizado' });
     } catch (error) {
       console.error('Error al actualizar la verificación:', error);
-      res.status(500).json({ msg: 'Error al actualizar la verificación' });
+      res.redirect('/tokenVerified');
+      //res.status(500).json({ msg: 'Error al actualizar la verificación' });
     }
 };
 

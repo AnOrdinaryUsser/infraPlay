@@ -139,26 +139,45 @@ export const DeleteGame = async (req, res) => {
 };
 
 export const getAllGamesWithSections = async (req, res) => {
+  const { userName } = req.query;
+  console.log(userName);
   try {
     const games = await Games.findAll({
       include: [
         {
           model: Sections,
-          attributes: ['name'], // Solo queremos el nombre de la sección
+          attributes: ['name','userName'], // Solo queremos el nombre de la sección
+          where: { userName },
         },
       ],
     });
     //console.log(games[0].section.name);
 
     // Transformar los datos para incluir el nombre de la sección directamente en cada juego
-    const result = games.map(game => ({
+    /*const result = games.map(game => ({
       id: game.id,
       name: game.name,
       gameUrl: game.gameUrl,
+      
+      image: Buffer.from(game.image, 'base64'),
       sectionName: game.section?.name || null, // Manejar casos donde no haya sección
-    }));
+    }));*/
 
-    res.status(200).json(result);
+    const gamesWithBase64Images = games.map(game => {
+      const gameData = game.toJSON(); // Convierte el juego a un objeto literal
+      if (gameData.image && Buffer.isBuffer(gameData.image)) {
+          gameData.image = gameData.image.toString('base64'); // Convierte el buffer a base64
+      }
+      if (gameData.section) {
+        gameData.sectionName = gameData.section.name; // Asume que `section` tiene un campo `name`
+      } else {
+        gameData.sectionName = null; // Si no hay sección, asigna null
+      }
+      return gameData;
+    });
+
+
+    res.status(200).json(gamesWithBase64Images);
   } catch (error) {
     console.error('Error fetching games with sections:', error);
     res.status(500).json({ error: 'Error fetching games with sections' });

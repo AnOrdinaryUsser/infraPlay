@@ -83,9 +83,11 @@ const Games = () => {
   }, [userName]);
 
   useEffect(() => {
+    if (userName) {
     const fetchGamesWithSections = async () => {
       try {
-        const gamesData = await getAllGamesWithSections();
+        console.log(userName);
+        const gamesData = await getAllGamesWithSections(userName);
         console.log(gamesData);
         setGames(gamesData);
         console.log(gamesData);
@@ -95,7 +97,8 @@ const Games = () => {
     };
   
     fetchGamesWithSections();
-  }, []);  
+    }
+  }, [userName]);  
 
   const axiosJWT = axios.create();
 
@@ -127,7 +130,7 @@ const Games = () => {
       console.log(response.msg);
       
       // Refetch de los juegos después de agregar uno nuevo
-      const gamesData = await getAllGamesWithSections();
+      const gamesData = await getAllGamesWithSections(userName);
       setGames(gamesData);
       setAddGameModalVisible(false);
     } catch (error) {
@@ -169,7 +172,7 @@ const Games = () => {
       console.log(response.msg);
   
       // Actualizar la lista de juegos después de la edición
-      const gamesData = await getAllGamesWithSections();
+      const gamesData = await getAllGamesWithSections(userName);
       setGames(gamesData);
       setEditGameModalVisible(false);
     } catch (error) {
@@ -182,7 +185,7 @@ const Games = () => {
       if (window.confirm("¿Estás seguro de que deseas eliminar este juego?")) {
           try {
               await deleteGame(gameId);
-              const gamesData = await getAllGamesWithSections();
+              const gamesData = await getAllGamesWithSections(userName);
               setGames(gamesData);
           } catch (error) {
               console.error("Error deleting game:", error);
