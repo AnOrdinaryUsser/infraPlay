@@ -173,13 +173,18 @@ The design focuses on efficient administration and access to key management tool
 ## 🎥 Demonstration video
 👀 See InfraPlay in action! Click below to watch a demo showcasing and how to interact with the projected tactile surface
 
-🚀 Watch the video 
+🚀 Click on the image to watch the video on YouTube:
 
+<p align="center">
+  <a href="https://youtu.be/hc7_yIkkCVY">
+    <img src="https://img.youtube.com/vi/hc7_yIkkCVY/0.jpg" alt="demo" />
+  </a>
+</p>
 ---
 
 ## License
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0). This means that you may share the material non-commercially, provided proper attribution is given, but you may not modify it or create derivative works.
 
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
