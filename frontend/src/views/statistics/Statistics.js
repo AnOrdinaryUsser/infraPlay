@@ -41,16 +41,28 @@ const Statistics = () => {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userName, setUserName] = useState(null);
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [institute, setInstitute] = useState("");
 
   useEffect(() => {
-    refreshToken(setToken, setExpire);
+    // Refresh token and get user info
+    const fetchUserData = async () => {
+      try {
+        await refreshToken(setToken, setExpire, setName, setSurname, setInstitute, setUserName, setEmail);
+      } catch (error) {
+        console.error("Error refreshing token", error);
+      }
+    };
+    fetchUserData();
   }, []);
 
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const data = await fetchSessionStats(); // Llama al servicio
-        console.log(data);
+        const data = await fetchSessionStats(userName); // Pasamos userName
         setStats(data); // Actualiza el estado con los datos recibidos
       } catch (err) {
         setError("Error al cargar estadísticas.");
@@ -60,8 +72,10 @@ const Statistics = () => {
       }
     };
 
-    loadStats(); // Carga las estadísticas al montar el componente
-  }, []);
+    if (userName) { 
+      loadStats(userName);
+    } 
+  }, [userName]);
 
   const axiosJWT = axios.create();
 
@@ -96,11 +110,9 @@ const Statistics = () => {
       alert("Por favor, completa todos los campos.");
       return;
     }
-
-    // Procesar el archivo CSV antes de enviarlo
+  
     Papa.parse(csvFile, {
       complete: (result) => {
-        // El resultado es un array de objetos con los datos del CSV
         const sessionData = result.data.map((row) => ({
           startTime: row["Tiempo de inicio"],
           endTime: row["Tiempo de finalización"],
@@ -108,19 +120,12 @@ const Statistics = () => {
           maxScore: row["Puntuación máxima"],
           duration: row["Duración"],
         }));
-        console.log(sessionData);
-
-        // Ahora pasamos los datos al servicio para que se encargue de hacer el POST
-        uploadSessionData(sessionName, sessionData)
-          .then((response) => {
-            console.log("Sesión creada con éxito", response.data);
-            setVisible(false); // Cerrar el modal
-          })
-          .catch((error) => {
-            console.error("Error al crear la sesión", error);
-          });
+  
+        uploadSessionData(sessionName, sessionData, userName) // Pasar el userName
+          .then(() => setVisible(false))
+          .catch((error) => console.error("Error al crear la sesión", error));
       },
-      header: true, // Si el archivo tiene encabezados
+      header: true,
     });
   };
 
@@ -198,6 +203,7 @@ const Statistics = () => {
         <CButton
           className="mb-4 d-grid"
           color="secondary"
+          aria-pressed="true"
           style={{ color: "white" }}
           onClick={() => setVisible(true)}
         >
@@ -233,7 +239,7 @@ const Statistics = () => {
             <CButton color="secondary" onClick={() => setVisible(false)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={handleFormSubmit}>
+            <CButton color="success" onClick={handleFormSubmit}>
               Subir
             </CButton>
           </CModalFooter>

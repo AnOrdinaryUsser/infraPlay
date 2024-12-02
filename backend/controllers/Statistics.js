@@ -37,17 +37,16 @@ export const uploadSessionData = async (req, res) => {
  * @param {Response} res - Respuesta HTTP
  */
 export const createSessionGroup = async (req, res) => {
-  const { sessionName } = req.body;
-  console.log(sessionName);
+  const { sessionName, userName } = req.body; // Añadimos userName
   try {
-    const newGroup = await SessionGroups.create({ sessionName });
-    console.log(newGroup);
+    const newGroup = await SessionGroups.create({ sessionName, userName });
     res.status(201).json({ sessionGroupId: newGroup.id });
   } catch (error) {
     console.error("Error al crear el grupo de sesión:", error);
     res.status(500).json({ error: "Error al crear el grupo de sesión." });
   }
 };
+
 
 /**
  * Guarda datos de sesión vinculados a un grupo
@@ -84,18 +83,21 @@ export const uploadSessionData = async (req, res) => {
  * @param {Response} res
  */
 export const getSessionStats = async (req, res) => {
+  const { userName } = req.query; // Tomamos el userName del query params
+
   try {
-    const sessionGroups = await SessionGroups.findAll(); // Obtén todos los grupos de sesión
+    const sessionGroups = await SessionGroups.findAll({
+      where: { userName }, // Filtra por el usuario
+    });
 
     const sessionStats = await Promise.all(
       sessionGroups.map(async (group) => {
         const sessionData = await SessionData.findAll({
           where: { sessionGroupId: group.id },
-          order: [["startTime", "ASC"]], // Ordena por fecha de inicio
+          order: [["startTime", "ASC"]],
         });
 
         if (sessionData.length === 0) {
-          // Si no hay datos, devuelve valores predeterminados
           return {
             sessionGroupId: group.id,
             sessionName: group.sessionName,
@@ -106,15 +108,10 @@ export const getSessionStats = async (req, res) => {
           };
         }
 
-        // Procesa los datos de sesión
         const timesPlayed = sessionData.length;
         const firstStartTime = sessionData[0].startTime;
         const highestMaxScore = Math.max(...sessionData.map((d) => d.maxScore));
-
-        // Convertir las duraciones
         const parsedDurations = sessionData.map((d) => parseDuration(d.duration));
-
-        // Encontrar la duración más corta
         const shortestDuration = parsedDurations.reduce((min, curr) =>
           curr.valueInSeconds < min.valueInSeconds ? curr : min
         ).original;
@@ -136,6 +133,7 @@ export const getSessionStats = async (req, res) => {
     res.status(500).json({ error: "Error al obtener estadísticas de sesión." });
   }
 };
+
 
 const parseDuration = (durationString) => {
   const minutesMatch = durationString.match(/(\d+)\s*minuto/);
