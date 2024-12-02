@@ -30,7 +30,7 @@ import CIcon from "@coreui/icons-react";
 import { cilViewStream, cilViewColumn, cilImage } from "@coreui/icons";
 import { getSections, modifySection } from "../../services/SectionService.js";
 import { refreshToken } from "../../services/UserService.js";
-import { addGame, getGamesBySectionId } from "../../services/GameService.js";
+import { addGame, getGamesBySectionId, getAllGamesWithSections } from "../../services/GameService.js";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
 const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
@@ -90,7 +90,7 @@ const Dashboard = () => {
     }
   }, [userName]);
 
-  useEffect(() => {
+ /* useEffect(() => {
     const fetchGames = async () => {
       if (sections[activeKey]) {
         try {
@@ -104,7 +104,25 @@ const Dashboard = () => {
       }
     };
     fetchGames();
-  }, [activeKey, sections]);
+  }, [activeKey, sections, userName]);
+*/
+  useEffect(() => {
+    if (userName) {
+    const fetchGamesWithSections = async () => {
+      try {
+        console.log(userName);
+        const gamesData = await getAllGamesWithSections(userName);
+        console.log(gamesData);
+        setGames(gamesData);
+        console.log(gamesData);
+      } catch (error) {
+        console.error('Error fetching games with sections:', error);
+      }
+    };
+  
+    fetchGamesWithSections();
+    }
+  }, [activeKey, sections, userName]);  
 
   const updateGrid = () => {
     setGrid({ rows, cols });
@@ -151,18 +169,21 @@ const Dashboard = () => {
   const handleAddGame = async (e) => {
     e.preventDefault();
     try {
-        const sectionId = sections[activeKey].id; 
-        console.log(gameImage);
-        const response = await addGame(gameName, gameUrl, gameImage, sectionId);
-        console.log(response.msg); 
-        // Refetch games after adding a new one
-        const gamesData = await getGamesBySectionId(sectionId);
-        setGames(gamesData);
-        setAddGameModalVisible(false);
+      const sectionId = sections[activeKey]?.id; // Obtiene el ID de la sección seleccionada
+      console.log(gameImage);
+      
+      // Llama al servicio para agregar el juego
+      const response = await addGame(gameName, gameUrl, gameImage, sectionId);
+      console.log(response.msg);
+      
+      // Refetch de los juegos después de agregar uno nuevo
+      const gamesData = await getAllGamesWithSections(userName);
+      setGames(gamesData);
+      setAddGameModalVisible(false);
     } catch (error) {
-        console.error("Error adding game:", error);
+      console.error("Error adding game:", error);
     }
-  };
+  }; 
 
   const handleImageClick = (url) => {
     const gameId = url.split('/').pop();  // Extraer el ID del juego del URL
@@ -322,7 +343,7 @@ const Dashboard = () => {
         </CModal>
 
         {/* Modal for adding a game */}
-        <CModal
+       <CModal
           alignment="center"
           visible={addGameModalVisible}
           onClose={() => setAddGameModalVisible(false)}
@@ -332,6 +353,7 @@ const Dashboard = () => {
           </CModalHeader>
           <CModalBody>
             <CForm onSubmit={handleAddGame}>
+              {/* Campo para el nombre del juego */}
               <CInputGroup className="mb-3">
                 <CFormInput
                   placeholder="Nombre del juego"
@@ -340,6 +362,8 @@ const Dashboard = () => {
                   required
                 />
               </CInputGroup>
+              
+              {/* Campo para la URL del juego */}
               <CInputGroup className="mb-3">
                 <CFormInput
                   type="url"
@@ -349,6 +373,8 @@ const Dashboard = () => {
                   required
                 />
               </CInputGroup>
+              
+              {/* Campo para subir imagen */}
               <CInputGroup className="mb-3">
                 <CInputGroupText>
                   <CIcon icon={cilImage} />
@@ -361,6 +387,23 @@ const Dashboard = () => {
                   required
                 />
               </CInputGroup>
+              
+              {/* Desplegable para seleccionar la sección */}
+              <CInputGroup className="mb-3">
+                <select
+                  className="form-select"
+                  onChange={(e) => setActiveKey(Number(e.target.value))} // Actualiza el estado con el índice de la sección seleccionada
+                  required
+                >
+                  <option value="" disabled selected>Selecciona una sección</option>
+                  {sections.map((section, index) => (
+                    <option key={section.id} value={index}>
+                      {section.name}
+                    </option>
+                  ))}
+                </select>
+              </CInputGroup>
+              
               <div className="d-grid">
                 <CButton type="submit" color="success" aria-pressed="true">
                   Añadir Juego

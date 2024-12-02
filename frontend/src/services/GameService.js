@@ -110,9 +110,12 @@ export const getGamesBySectionId = async (sectionId) => {
  * Function to get all games
  * @method getAllGamesWithSections
  */
-export const getAllGamesWithSections = async () => {
+export const getAllGamesWithSections = async (userName) => {
+    console.log(userName);
     try {
-      const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/games`);
+      const response = await axios.get(`http://${IP_SERVER}:${PORT_BACKEND}/games`, {
+        params: { userName }
+    });
       return response.data;
     } catch (error) {
       console.error('Error fetching games with sections:', error);
