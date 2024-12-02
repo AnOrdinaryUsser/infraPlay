@@ -13,6 +13,10 @@ const SessionGroups = db.define('session_groups', {
         allowNull: false,
         unique: true, // Garantiza que el nombre de sesión sea único
     },
+    userName: {
+        type: DataTypes.STRING,
+        allowNull: false, // Cada grupo pertenece a un usuario
+    },
 }, {
     freezeTableName: true
 });

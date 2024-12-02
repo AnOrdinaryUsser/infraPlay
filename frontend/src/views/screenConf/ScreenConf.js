@@ -123,7 +123,7 @@ const SensorConfigurator = () => {
               placeholder="Introduce Ymax (negativos permitidos)"
             />
           </div>
-          <CButton color="primary" className="mt-3" onClick={handleSave}>
+          <CButton color="success" className="mt-3" onClick={handleSave}>
             Guardar
           </CButton>
         </CCol>
