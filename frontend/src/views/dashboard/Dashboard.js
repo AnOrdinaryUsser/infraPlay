@@ -33,7 +33,7 @@ import { refreshToken } from "../../services/UserService.js";
 import { addGame, getGamesBySectionId, getAllGamesWithSections } from "../../services/GameService.js";
 
 const IP_SERVER = process.env.REACT_APP_IP_SERVER;
-const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
+const PORT_FRONTEND = process.env.REACT_APP_PORT_BACKEND;
 
 /**
  * @description View for Dashboard
@@ -88,6 +88,7 @@ const Dashboard = () => {
       // Load sections when the userName is available
       getSections(userName, setSections).catch(error => console.error("Error fetching sections", error));
     }
+    console.log(sections);
   }, [userName]);
 
  /* useEffect(() => {
@@ -187,7 +188,7 @@ const Dashboard = () => {
 
   const handleImageClick = (url) => {
     const gameId = url.split('/').pop();  // Extraer el ID del juego del URL
-    window.open(`http://192.168.1.50:3000/embed/${gameId}`, '_blank');
+    window.open(`http://${IP_SERVER}:${PORT_FRONTEND}/embed/${gameId}`, '_blank');
   };
 
   const handleModifySection = async (e) => {
@@ -242,22 +243,24 @@ const Dashboard = () => {
                 visible={activeKey === index}
               >
                 <CContainer>
+                  {/* Filtrar juegos para la sección activa */}
                   {[...Array(section.rows)].map((_, rowIndex) => (
                     <CRow key={rowIndex} xs={{ gutterX: 2 }}>
                       {[...Array(section.cols)].map((_, colIndex) => {
                         const gameIndex = rowIndex * section.cols + colIndex;
+                        const filteredGames = games.filter(game => game.sectionName === section.name);
                         return (
                           <CCol key={colIndex} xs={{ span: 12 / section.cols }}>
                             <div className="p-3">
-                              {games[gameIndex] ? (
+                              {filteredGames[gameIndex] ? (
                                 // Mostrar el juego si existe
                                 <CCard className="text-center">
                                   <CCardBody>
-                                    <CCardTitle>{games[gameIndex].name}</CCardTitle>
-                                    {games[gameIndex].image && (
+                                    <CCardTitle>{filteredGames[gameIndex].name}</CCardTitle>
+                                    {filteredGames[gameIndex].image && (
                                       <CImage 
-                                        src={`data:image/jpeg;base64,${games[gameIndex].image}`}
-                                        onClick={() => handleImageClick(games[gameIndex].gameUrl)}
+                                        src={`data:image/jpeg;base64,${filteredGames[gameIndex].image}`}
+                                        onClick={() => handleImageClick(filteredGames[gameIndex].gameUrl)}
                                         style={{  cursor: 'pointer', 
                                                   maxWidth: '50%',                                            
                                                   height: 'auto', }} 
@@ -302,116 +305,6 @@ const Dashboard = () => {
             ))}
           </CTabContent>
         </CRow>
-
-        {/* Modal for grid settings */}
-        <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
-          <CModalHeader>Editar Cuadrícula</CModalHeader>
-          <CModalBody>
-            <CForm onSubmit={handleModifySection}>
-              <CInputGroup className="mb-3">
-                <CInputGroupText><CIcon icon={cilViewStream} /></CInputGroupText>
-                <CFormInput
-                  placeholder="Número de Filas"
-                  type="number"
-                  value={editSectionRows}
-                  onChange={(e) => setEditSectionRows(e.target.value)}
-                  required
-                />
-              </CInputGroup>
-              <CInputGroup className="mb-3">
-                <CInputGroupText><CIcon icon={cilViewColumn} /></CInputGroupText>
-                <CFormInput
-                  placeholder="Número de Columnas"
-                  type="number"
-                  value={editSectionCols}
-                  onChange={(e) => setEditSectionCols(e.target.value)}
-                  required
-                />
-              </CInputGroup>
-              <div className="d-grid">
-                <CButton type="submit" color="success">
-                  Guardar Cambios
-                </CButton>
-              </div>
-            </CForm>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setModalVisible(false)}>
-              Cancelar
-            </CButton>
-          </CModalFooter>
-        </CModal>
-
-        {/* Modal for adding a game */}
-       <CModal
-          alignment="center"
-          visible={addGameModalVisible}
-          onClose={() => setAddGameModalVisible(false)}
-        >
-          <CModalHeader onClose={() => setAddGameModalVisible(false)}>
-            <CModalTitle>Añadir Juego</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <CForm onSubmit={handleAddGame}>
-              {/* Campo para el nombre del juego */}
-              <CInputGroup className="mb-3">
-                <CFormInput
-                  placeholder="Nombre del juego"
-                  id="gameName"
-                  onChange={(e) => setGameName(e.target.value)}
-                  required
-                />
-              </CInputGroup>
-              
-              {/* Campo para la URL del juego */}
-              <CInputGroup className="mb-3">
-                <CFormInput
-                  type="url"
-                  placeholder="URL del juego"
-                  id="gameUrl"
-                  onChange={(e) => setGameUrl(e.target.value)}
-                  required
-                />
-              </CInputGroup>
-              
-              {/* Campo para subir imagen */}
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon icon={cilImage} />
-                </CInputGroupText>
-                <CFormInput
-                  type="file"
-                  id="gameImage"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  required
-                />
-              </CInputGroup>
-              
-              {/* Desplegable para seleccionar la sección */}
-              <CInputGroup className="mb-3">
-                <select
-                  className="form-select"
-                  onChange={(e) => setActiveKey(Number(e.target.value))} // Actualiza el estado con el índice de la sección seleccionada
-                  required
-                >
-                  <option value="" disabled selected>Selecciona una sección</option>
-                  {sections.map((section, index) => (
-                    <option key={section.id} value={index}>
-                      {section.name}
-                    </option>
-                  ))}
-                </select>
-              </CInputGroup>
-              
-              <div className="d-grid">
-                <CButton type="submit" color="success" aria-pressed="true">
-                  Añadir Juego
-                </CButton>
-              </div>
-            </CForm>
-          </CModalBody>
-        </CModal>
       </CContainer>
     </>
   );
