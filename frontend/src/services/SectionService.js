@@ -16,10 +16,22 @@ const PORT_BACKEND = process.env.REACT_APP_PORT_BACKEND;
 export const addSection = async (section) => {
   try {
     console.log(section);
-    await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/section`, section);
-    //window.location.reload(); // Refresh the page to see the new section
+    const response = await axios.post(`http://${IP_SERVER}:${PORT_BACKEND}/section`, section);
+    
+    // Si la creación es exitosa, retornamos la respuesta.
+    return response.data;  // Este será el mensaje que viene del backend, como { msg: "Section Created" }
+    
   } catch (error) {
+    // Aquí capturamos los errores y los retornamos de una forma más clara.
     console.error("Error adding section:", error);
+
+    // Si el error tiene una respuesta con datos, los retornamos
+    if (error.response && error.response.data) {
+      return error.response.data;
+    } else {
+      // Si el error no tiene una respuesta adecuada, retornamos un mensaje genérico
+      return { error: "Error al crear la sección. Por favor, intente nuevamente." };
+    }
   }
 };
 
@@ -31,7 +43,7 @@ export const addSection = async (section) => {
 export const deleteSection = async (id) => {
   try {
     await axios.delete(`http://${IP_SERVER}:${PORT_BACKEND}/section/${id}`);
-    window.location.reload(); // Refresh the page to see the changes
+    //window.location.reload(); // Refresh the page to see the changes
   } catch (error) {
     console.error("Error deleting section:", error);
   }

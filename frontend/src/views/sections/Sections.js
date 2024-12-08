@@ -99,22 +99,46 @@ const Sections = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+        // Crear el objeto con los datos
         const sectionData = { sectionName, sectionRows, sectionCols, userName };
         console.log(sectionData);
+        
+        // Llamada a la función de agregar sección (ahora esperamos la respuesta del servicio)
         const response = await addSection(sectionData);
-        alert(response.msg);
+
+        // Verificamos la respuesta de la API
+        if (response && response.msg) {
+            console.log("Sección creada con éxito ✔️");
+            console.log(response.msg);
+            alert(response.msg); // Muestra el mensaje de éxito
+            if (userName) {
+              getSections(userName, setSections).catch(error => console.error("Error fetching sections", error));
+            }
+            setVisible(false);
+        } else if (response && response.error) {
+            // Si la respuesta tiene un error, mostramos ese mensaje
+            alert(response.error);  // Muestra el mensaje de error
+        } else {
+            // Si no hay respuesta válida
+            alert("Error desconocido al crear la sección.");
+        }
+
     } catch (error) {
-        alert("Error al crear la sección");
+        console.error("Error al crear la sección", error);
+        alert("Error al crear la sección. Por favor, intente nuevamente.");
     }
 };
 
 const handleDelete = async (id) => {
-  const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta sección?");
+  const confirmDelete = window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta sección?");
   if (confirmDelete) {
     try {
       await deleteSection(id);  // Llamamos a la función de servicio para eliminar la sección
+      if (userName) {
+        getSections(userName, setSections).catch(error => console.error("Error fetching sections", error));
+      }
       setSections(sections.filter((section) => section.id !== id));  // Actualizamos el estado local para reflejar los cambios
-      alert("Sección eliminada con éxito");
+      alert("Sección eliminada con éxito ✔️");
     } catch (error) {
       console.error("Error al eliminar la sección:", error);
       alert("Error al eliminar la sección");
@@ -216,47 +240,49 @@ const handleModifySection = async (e) => {
           <CModalTitle>Añadir sección</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          <CForm
-            validated={validated}
-            onSubmit={(e) => addUser(e, setValidated)}
-          >
-            <CInputGroup className="mb-3">
-              <CInputGroupText>
-                <CIcon icon={cilPencil} />
-              </CInputGroupText>
-              <CFormInput
-                placeholder="Nombre"
-                id="name"
-                onChange={(e) => setSectionName(e.target.value)}
-                required
-              />
-            </CInputGroup>
-            <CInputGroup className="mb-3">
-              <CInputGroupText><CIcon icon={cilViewStream} /></CInputGroupText>
-              <CFormInput
-                id="rows"
-                placeholder="Filas"
-                onChange={(e) => setSectionRows(e.target.value)}
-                required
-              />
-            </CInputGroup>
-            <CInputGroup className="mb-3">
-              <CInputGroupText>
-                <CIcon icon={cilViewColumn} />
-              </CInputGroupText>
-              <CFormInput
-                id="cols"
-                placeholder="Columnas"
-                onChange={(e) => setSectionCols(e.target.value)}
-                required
-              />
-            </CInputGroup>
-            <div className="d-grid">
-              <CButton type="submit" color="success" aria-pressed="true" onClick={handleSubmit}>
-                Crear sección
-              </CButton>
-            </div>
-          </CForm>
+        <CForm
+          validated={validated}
+          onSubmit={(e) => handleSubmit(e)} // Usar únicamente onSubmit
+        >
+          <CInputGroup className="mb-3">
+            <CInputGroupText>
+              <CIcon icon={cilPencil} />
+            </CInputGroupText>
+            <CFormInput
+              placeholder="Nombre"
+              id="name"
+              onChange={(e) => setSectionName(e.target.value)}
+              required
+            />
+          </CInputGroup>
+          <CInputGroup className="mb-3">
+            <CInputGroupText><CIcon icon={cilViewStream} /></CInputGroupText>
+            <CFormInput
+              id="rows"
+              type="number"
+              placeholder="Filas"
+              onChange={(e) => setSectionRows(Number(e.target.value))}
+              required
+            />
+          </CInputGroup>
+          <CInputGroup className="mb-3">
+            <CInputGroupText>
+              <CIcon icon={cilViewColumn} />
+            </CInputGroupText>
+            <CFormInput
+              id="cols"
+              type="number"
+              placeholder="Columnas"
+              onChange={(e) => setSectionCols(Number(e.target.value))}
+              required
+            />
+          </CInputGroup>
+          <div className="d-grid">
+            <CButton type="submit" color="success" aria-pressed="true">
+              Crear sección
+            </CButton>
+          </div>
+        </CForm>
         </CModalBody>
       </CModal>
       <CModal

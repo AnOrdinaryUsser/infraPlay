@@ -55,6 +55,12 @@ export const getSection = async (req, res) => {
  */
 export const addSection = async (req, res) => {
     const { sectionName, sectionRows, sectionCols, userName } = req.body;
+
+    // Validar que todos los datos requeridos estén presentes
+    if (!sectionName || !sectionRows || !sectionCols || !userName) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
     try {
         await Sections.create({
             name: sectionName,
@@ -62,12 +68,12 @@ export const addSection = async (req, res) => {
             cols: sectionCols,
             userName: userName
         });
-        res.json({ msg: "Section Created" });
+        res.json({ msg: "Sección creada con éxito ✔️" });
     } catch (error) {
         console.error("Error creating section:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
-}
+};
 
 /**
  * Module to modify a section
