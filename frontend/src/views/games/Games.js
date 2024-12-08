@@ -182,7 +182,7 @@ const Games = () => {
   
 
   const handleDeleteGame = async (gameId) => {
-      if (window.confirm("¿Estás seguro de que deseas eliminar este juego?")) {
+      if (window.confirm("🚨 ¿Estás seguro de que deseas eliminar este juego?")) {
           try {
               await deleteGame(gameId);
               const gamesData = await getAllGamesWithSections(userName);

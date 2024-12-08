@@ -59,18 +59,19 @@ const Statistics = () => {
     fetchUserData();
   }, []);
 
+  const loadStats = async () => {
+    try {
+      const data = await fetchSessionStats(userName); // Pasamos userName
+      setStats(data); // Actualiza el estado con los datos recibidos
+    } catch (err) {
+      setError("Error al cargar estadísticas.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadStats = async () => {
-      try {
-        const data = await fetchSessionStats(userName); // Pasamos userName
-        setStats(data); // Actualiza el estado con los datos recibidos
-      } catch (err) {
-        setError("Error al cargar estadísticas.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     if (userName) { 
       loadStats(userName);
@@ -105,14 +106,14 @@ const Statistics = () => {
     }
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async () => {
     if (!sessionName || !csvFile) {
       alert("Por favor, completa todos los campos.");
       return;
     }
   
     Papa.parse(csvFile, {
-      complete: (result) => {
+      complete: async (result) => {
         const sessionData = result.data.map((row) => ({
           startTime: row["Tiempo de inicio"],
           endTime: row["Tiempo de finalización"],
@@ -121,16 +122,22 @@ const Statistics = () => {
           duration: row["Duración"],
         }));
   
-        uploadSessionData(sessionName, sessionData, userName) // Pasar el userName
-          .then(() => setVisible(false))
-          .catch((error) => console.error("Error al crear la sesión", error));
+        try {
+          await uploadSessionData(sessionName, sessionData, userName); // Pasar el userName
+          setVisible(false); // Cerrar el modal
+          
+          // Recargar las estadísticas
+          loadStats();  // Llamar nuevamente a loadStats para actualizar la lista de sesiones
+        } catch (error) {
+          console.error("Error al crear la sesión", error);
+        }
       },
       header: true,
     });
   };
 
   const handleDeleteSession = async (sessionGroupId) => {
-    const confirmation = window.confirm("¿Estás seguro de que deseas eliminar esta sesión?");
+    const confirmation = window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta sesión?");
     if (confirmation) {
       try {
         await deleteSession(sessionGroupId);
